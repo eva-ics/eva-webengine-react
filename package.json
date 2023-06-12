@@ -1,0 +1,57 @@
+{
+  "name": "@eva-ics/webengine-react",
+  "version": "0.0.1",
+  "type": "module",
+  "description": "React components for EVA ICS HMI Web Engine",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build && tsc src/*.ts --declaration --lib es2020,dom --emitDeclarationOnly --declarationDir dist/ && mv dist/lib.d.ts dist/webengine-react.es.d.ts",
+    "preview": "vite preview"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eva-ics/eva-webengine-react"
+  },
+  "main": "./dist/webengine-react.umd.js",
+  "module": "./dist/webengine-react.es.js",
+  "files": [
+    "dist"
+  ],
+  "types": "./dist/webengine-react.es.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/webengine-react.es.js",
+      "require": "./dist/webengine-react.umd.js"
+    }
+  },
+  "keywords": [
+    "iot",
+    "iiot",
+    "browser",
+    "framework",
+    "evaics",
+    "hmi",
+    "eva-ics"
+  ],
+  "author": "Bohemia Automation",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/eva-ics/eva-webengine-react/issues"
+  },
+  "homepage": "https://www.eva-ics.com/",
+  "peerDependencies": {
+    "@eva-ics/webengine": "^0.5.5",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@eva-ics/webengine": "^0.5.5",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "@types/react": "^18.0.37",
+    "@types/react-dom": "^18.0.11",
+    "@vitejs/plugin-react": "^4.0.0",
+    "typescript": "^5.0.2",
+    "vite": "^4.3.9"
+  }
+}
