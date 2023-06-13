@@ -1,4 +1,4 @@
-import { Eva, StateProp } from "@eva-ics/webengine";
+import { Eva, StateProp, ItemState } from "@eva-ics/webengine";
 import { useState, useEffect, useRef, useCallback } from "react";
 
 let eva: Eva | null = null;
@@ -11,31 +11,41 @@ function set_engine(engine: Eva) {
   eva = engine;
 }
 
-function useEvaState(oid: string) {
-  const [state, setState] = useState({});
+interface EvaStateParams {
+  oid: string;
+  engine?: Eva;
+}
 
+interface EvaStateHistoryParams {
+  oid: string;
+  timeframe: string | Array<string>;
+  update: number;
+  prop?: StateProp;
+  fill?: string;
+  args?: any;
+  engine?: Eva;
+}
+
+function useEvaState(params: EvaStateParams) {
+  const [state, setState] = useState({} as ItemState);
+
+  const eva_engine: Eva = params.engine || (eva as Eva);
   useEffect(() => {
-    eva!.watch(oid, setState);
+    eva_engine!.watch(params.oid, setState);
     return () => {
-      eva!.unwatch(oid, setState);
+      eva_engine!.unwatch(params.oid, setState);
     };
-  }, [oid]);
+  }, [params.oid]);
   return state;
 }
 
-function useEvaStateHistory(
-  oid: string,
-  timeframe: string | Array<string>,
-  update: number,
-  prop?: StateProp,
-  fill?: string,
-  args?: any
-) {
+function useEvaStateHistory(params: EvaStateHistoryParams) {
   const [state, setState] = useState({ data: null, error: null });
   const visible = useRef(false);
   const update_worker: any = useRef(null);
 
-  let update_interval = update * 1000;
+  const eva_engine: Eva = params.engine || (eva as Eva);
+  let update_interval = params.update * 1000;
   if (isNaN(update_interval)) {
     update_interval = 1000;
   } else if (update_interval < 100) {
@@ -47,13 +57,8 @@ function useEvaStateHistory(
       update_worker.current = null;
       return;
     }
-    if (eva && eva.logged_in) {
-      let tframes;
-      if (timeframe) {
-        tframes = timeframe;
-      } else {
-        tframes = "1H";
-      }
+    if (eva_engine && eva_engine.logged_in) {
+      let tframes = params.timeframe || "1H";
       if (!Array.isArray(tframes)) {
         tframes = [tframes];
       }
@@ -66,23 +71,27 @@ function useEvaStateHistory(
           primary_tf_idx = idx;
         }
         let t_end = t[1] || null;
-        let api_opts = args;
+        let api_opts = params.args;
         let x: StateProp | null =
-          prop === undefined
+          params.prop === undefined
             ? StateProp.Value
-            : prop == StateProp.Any
+            : params.prop == StateProp.Any
             ? null
-            : prop;
+            : params.prop;
         let api_call_opts = {
           ...{
             s: t_start,
             e: t_end,
             x: x,
-            w: fill
+            w: params.fill
           },
           ...api_opts
         };
-        return eva!.call("item.state_history", oid, api_call_opts);
+        return eva_engine!.call(
+          "item.state_history",
+          params.oid,
+          api_call_opts
+        );
       });
       Promise.all(calls)
         .then((result) => {
@@ -96,7 +105,14 @@ function useEvaStateHistory(
       setState({ data: null, error: null });
     }
     update_worker.current = setTimeout(updateHistory, update_interval);
-  }, [oid, timeframe, prop, fill, args, update_interval]);
+  }, [
+    params.oid,
+    params.timeframe,
+    params.prop,
+    params.fill,
+    params.args,
+    update_interval
+  ]);
 
   useEffect(() => {
     visible.current = true;
@@ -108,8 +124,15 @@ function useEvaStateHistory(
       clearTimeout(update_worker.current);
       update_worker.current = null;
     };
-  }, [oid, updateHistory]);
+  }, [params.oid, updateHistory]);
   return state;
 }
 
-export { get_engine, set_engine, useEvaState, useEvaStateHistory };
+export {
+  get_engine,
+  set_engine,
+  useEvaState,
+  useEvaStateHistory,
+  EvaStateParams,
+  EvaStateHistoryParams
+};
