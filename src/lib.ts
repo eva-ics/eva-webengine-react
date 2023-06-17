@@ -3,13 +3,13 @@ import { useState, useEffect, useRef, useCallback } from "react";
 
 let eva: Eva | null = null;
 
-function get_engine(): Eva | null {
+const get_engine = (): Eva | null => {
   return eva;
-}
+};
 
-function set_engine(engine: Eva) {
+const set_engine = (engine: Eva) => {
   eva = engine;
-}
+};
 
 interface EvaStateParams {
   oid: string;
@@ -26,7 +26,7 @@ interface EvaStateHistoryParams {
   engine?: Eva;
 }
 
-function useEvaState(params: EvaStateParams) {
+const useEvaState = (params: EvaStateParams) => {
   const [state, setState] = useState({} as ItemState);
 
   const eva_engine: Eva = params.engine || (eva as Eva);
@@ -37,9 +37,9 @@ function useEvaState(params: EvaStateParams) {
     };
   }, [params.oid]);
   return state;
-}
+};
 
-function useEvaStateHistory(params: EvaStateHistoryParams) {
+const useEvaStateHistory = (params: EvaStateHistoryParams) => {
   const [state, setState] = useState({ data: null, error: null });
   const visible = useRef(false);
   const update_worker: any = useRef(null);
@@ -126,7 +126,7 @@ function useEvaStateHistory(params: EvaStateHistoryParams) {
     };
   }, [params.oid, updateHistory]);
   return state;
-}
+};
 
 export {
   get_engine,
