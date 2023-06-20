@@ -7,10 +7,16 @@ export default defineConfig({
   //plugins: [react()],
   build: {
     rollupOptions: {
-      external: ["@eva-ics/webengine", "react", "react-dom"]
+      external: [
+        "@eva-ics/webengine",
+        "react",
+        "react-dom",
+        "react-qrious",
+        "react-chartjs-2"
+      ]
     },
     lib: {
-      entry: "./src/lib.ts",
+      entry: "./src/lib.mts",
       name: lib_name,
       fileName: (format) => `${lib_name}.${format}.js`
     }

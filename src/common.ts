@@ -1,4 +1,4 @@
-import { Eva, StateProp, ItemState } from "@eva-ics/webengine";
+import { Eva, EvaError, StateProp, ItemState } from "@eva-ics/webengine";
 import { useState, useEffect, useRef, useCallback } from "react";
 
 let eva: Eva | null = null;
@@ -11,13 +11,18 @@ const set_engine = (engine: Eva) => {
   eva = engine;
 };
 
+interface CanvasPosition {
+  x: number;
+  y: number;
+}
+
 interface EvaStateParams {
-  oid: string;
+  oid?: string;
   engine?: Eva;
 }
 
 interface EvaStateHistoryParams {
-  oid: string;
+  oid: string | Array<string>;
   timeframe: string | Array<string>;
   update: number;
   prop?: StateProp;
@@ -31,16 +36,29 @@ const useEvaState = (params: EvaStateParams) => {
 
   const eva_engine: Eva = params.engine || (eva as Eva);
   useEffect(() => {
-    eva_engine!.watch(params.oid, setState);
+    if (params.oid) {
+      if (eva_engine) {
+        eva_engine.watch(params.oid, setState);
+      } else {
+        throw new Error("EVA ICS WebEngine not set");
+      }
+    }
     return () => {
-      eva_engine!.unwatch(params.oid, setState);
+      if (eva_engine && params.oid) {
+        eva_engine.unwatch(params.oid, setState);
+      }
     };
   }, [params.oid]);
   return state;
 };
 
+interface StateHistoryData {
+  data: any;
+  error?: EvaError;
+}
+
 const useEvaStateHistory = (params: EvaStateHistoryParams) => {
-  const [state, setState] = useState({ data: null, error: null });
+  const [state, setState] = useState({ data: null } as StateHistoryData);
   const visible = useRef(false);
   const update_worker: any = useRef(null);
 
@@ -96,13 +114,13 @@ const useEvaStateHistory = (params: EvaStateHistoryParams) => {
       Promise.all(calls)
         .then((result) => {
           (result as any).t = result[primary_tf_idx].t;
-          setState({ data: result as any, error: null });
+          setState({ data: result });
         })
-        .catch((err) => {
+        .catch((err: EvaError) => {
           setState({ data: null, error: err });
         });
     } else {
-      setState({ data: null, error: null });
+      setState({ data: null });
     }
     update_worker.current = setTimeout(updateHistory, update_interval);
   }, [
@@ -117,7 +135,11 @@ const useEvaStateHistory = (params: EvaStateHistoryParams) => {
   useEffect(() => {
     visible.current = true;
     if (!update_worker.current) {
-      updateHistory();
+      if (eva_engine) {
+        updateHistory();
+      } else {
+        throw new Error("EVA ICS WebEngine not set");
+      }
     }
     return () => {
       visible.current = false;
@@ -131,6 +153,7 @@ const useEvaStateHistory = (params: EvaStateHistoryParams) => {
 export {
   get_engine,
   set_engine,
+  CanvasPosition,
   useEvaState,
   useEvaStateHistory,
   EvaStateParams,

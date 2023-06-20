@@ -1,11 +1,11 @@
 {
   "name": "@eva-ics/webengine-react",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "type": "module",
   "description": "React components for EVA ICS HMI Web Engine",
   "scripts": {
     "dev": "vite",
-    "build": "vite build && tsc src/*.ts --declaration --lib es2020,dom --emitDeclarationOnly --declarationDir dist/ && mv dist/lib.d.ts dist/webengine-react.es.d.ts",
+    "build": "vite build && tsc src/*.mts --skipLibCheck --esModuleInterop --jsx react-jsx --declaration --lib es2020,dom --emitDeclarationOnly --declarationDir dist/ && mv dist/lib.d.mts dist/webengine-react.es.d.ts",
     "preview": "vite preview"
   },
   "repository": {
@@ -40,17 +40,21 @@
   },
   "homepage": "https://www.eva-ics.com/",
   "peerDependencies": {
-    "@eva-ics/webengine": "^0.5.5",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
-  },
-  "devDependencies": {
-    "@eva-ics/webengine": "^0.5.5",
+    "@eva-ics/webengine": "^0.5.13",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-qrious": "^2.5.6",
+    "react-chartjs-2": "^5.2.0",
+    "chart.js": "^4.1.1"
+  },
+  "devDependencies": {
+    "@eva-ics/webengine": "^0.5.13",
     "@types/react": "^18.0.37",
     "@types/react-dom": "^18.0.11",
     "@vitejs/plugin-react": "^4.0.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-qrious": "^2.5.6",
     "typescript": "^5.0.2",
     "vite": "^4.3.9"
   }
