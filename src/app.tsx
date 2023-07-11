@@ -292,12 +292,10 @@ const OtpForm = ({
             ? props?.label_otp_invalid || "Invalid OTP code"
             : ""}
         </div>
-        <div className="eva login row">
-          <div className="eva login label">
-            <label htmlFor="eva_input_otp">
-              {props?.label_otp_code || "Code"}
-            </label>
-          </div>
+        <div className="eva login row input">
+          <label htmlFor="eva_input_otp">
+            {props?.label_otp_code || "Code"}
+          </label>
           <input
             className="eva login"
             ref={otpRef}
@@ -401,12 +399,10 @@ const CredsForm = ({
     <>
       <form className="eva login" onSubmit={onSubmit}>
         <div className="eva login error">{error_msg}</div>
-        <div className="eva login row">
-          <div className="eva login label">
-            <label htmlFor="eva_input_login">
-              {props?.label_login || "Login"}
-            </label>
-          </div>
+        <div className="eva login row text">
+          <label htmlFor="eva_input_login">
+            {props?.label_login || "Login"}
+          </label>
           <input
             className="eva login"
             id="eva_input_login"
@@ -417,12 +413,10 @@ const CredsForm = ({
             onChange={onUpdateField}
           />
         </div>
-        <div className="eva login row">
-          <div className="eva login label">
-            <label htmlFor="eva_input_password">
-              {props?.label_password || "Password"}
-            </label>
-          </div>
+        <div className="eva login row text">
+          <label htmlFor="eva_input_password">
+            {props?.label_password || "Password"}
+          </label>
           <input
             className="eva login"
             id="eva_input_password"
