@@ -136,7 +136,7 @@ const ControlButtonToggle = ({
     eva_engine.action
       .toggle(oid, true)
       .then((result) => handle_action_finished(result, on_success, on_fail))
-      .catch((err) => handle_action_error(err));
+      .catch((err) => handle_action_error(err, on_fail));
   };
 
   return (
@@ -195,7 +195,7 @@ const ControlButtonValue = ({
       })
       .catch((err) => {
         setValue(undefined);
-        handle_action_error(err);
+        handle_action_error(err, on_fail);
       });
   };
 
@@ -266,7 +266,7 @@ const ControlButtonRun = ({
     eva_engine.action
       .run(oid, params, true)
       .then((result) => handle_action_finished(result, on_success, on_fail))
-      .catch((err) => handle_action_error(err));
+      .catch((err) => handle_action_error(err, on_fail));
   };
 
   const isDisabled = (): boolean | undefined => {
