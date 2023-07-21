@@ -292,7 +292,7 @@ const OtpForm = ({
             ? props?.label_otp_invalid || "Invalid OTP code"
             : ""}
         </div>
-        <div className="eva login row input">
+        <div className="eva login row text">
           <label htmlFor="eva_input_otp">
             {props?.label_otp_code || "Code"}
           </label>
