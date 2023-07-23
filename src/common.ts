@@ -17,14 +17,14 @@ interface CanvasPosition {
 }
 
 interface EvaStateParams {
-  oid?: string;
+  oid: string;
   engine?: Eva;
 }
 
 interface EvaStateHistoryParams {
   oid: string | Array<string>;
   timeframe: string | Array<string>;
-  update: number;
+  update?: number;
   prop?: StateProp;
   fill?: string;
   args?: any;
@@ -63,7 +63,7 @@ const useEvaStateHistory = (params: EvaStateHistoryParams) => {
   const update_worker: any = useRef(null);
 
   const eva_engine: Eva = params.engine || (eva as Eva);
-  let update_interval = params.update * 1000;
+  let update_interval = params.update ? params.update * 1000 : 1000;
   if (isNaN(update_interval)) {
     update_interval = 1000;
   } else if (update_interval < 100) {
