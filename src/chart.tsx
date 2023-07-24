@@ -172,7 +172,7 @@ const LineChart = ({
         ...options
       };
       return (
-        <div className="chart-container">
+        <div className="eva chart container">
           <Line datasetIdKey="id" data={data} options={chart_ops} />
         </div>
       );
