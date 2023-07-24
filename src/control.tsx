@@ -223,7 +223,7 @@ const ControlButtonValue = ({
         id={id}
       />
       <label htmlFor={id}>
-        <div className={`eva button label input ${css_class || ""}`}>
+        <div className={`eva button input label ${css_class || ""}`}>
           {label || oid}
         </div>
       </label>
