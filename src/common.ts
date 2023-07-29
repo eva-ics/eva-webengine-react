@@ -150,12 +150,79 @@ const useEvaStateHistory = (params: EvaStateHistoryParams) => {
   return state;
 };
 
+interface EvaAPICallParams {
+  method: string;
+  params?: object;
+  update?: number;
+  engine?: Eva;
+}
+
+interface APICallData {
+  data: any;
+  error?: EvaError;
+}
+
+const useEvaAPICall = (params: EvaAPICallParams) => {
+  const [state, setState] = useState({ data: null } as APICallData);
+  const visible = useRef(false);
+  const update_worker: any = useRef(null);
+
+  const eva_engine: Eva = params.engine || (eva as Eva);
+  let update_interval = params.update ? params.update * 1000 : 1000;
+  if (isNaN(update_interval)) {
+    update_interval = 1000;
+  } else if (update_interval < 100) {
+    update_interval = 100;
+  }
+
+  const updateData = useCallback(() => {
+    if (!visible.current) {
+      update_worker.current = null;
+      return;
+    }
+    if (eva_engine && eva_engine.logged_in) {
+      eva_engine!
+        .call(params.method, params.params)
+        .then((result) => {
+          setState({ data: result });
+        })
+        .catch((err: EvaError) => {
+          setState({ data: null, error: err });
+        });
+    } else {
+      setState({ data: null });
+    }
+    update_worker.current = setTimeout(updateData, update_interval);
+  }, [params.method, params.params, update_interval]);
+
+  useEffect(() => {
+    visible.current = true;
+    if (!update_worker.current) {
+      if (eva_engine) {
+        updateData();
+      } else {
+        throw new Error("EVA ICS WebEngine not set");
+      }
+    }
+    return () => {
+      visible.current = false;
+      clearTimeout(update_worker.current);
+      update_worker.current = null;
+    };
+  }, [params.method, params.params, updateData]);
+  return state;
+};
+
 export {
   get_engine,
   set_engine,
   CanvasPosition,
   useEvaState,
   useEvaStateHistory,
+  useEvaAPICall,
   EvaStateParams,
-  EvaStateHistoryParams
+  EvaStateHistoryParams,
+  StateHistoryData,
+  EvaAPICallParams,
+  APICallData
 };
