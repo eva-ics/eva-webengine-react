@@ -27,10 +27,9 @@ export {
 } from "./control";
 export { Canvas } from "./canvas";
 export { LineChart } from "./chart";
-export type {
+export {
   GaugeType,
   StrokeLineCap as GaugeStrokeLineCap,
   ClassNameColors as GaugeClassNameColors,
-  GaugeParams
+  Gauge
 } from "./gauge";
-export { Gauge } from "./gauge";
