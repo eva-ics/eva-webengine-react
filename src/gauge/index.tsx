@@ -12,21 +12,21 @@ import GaugeMinimal from "./GaugeMinimal";
 import { Eva } from "@eva-ics/webengine";
 import { ItemValueThreshold } from "../value";
 
-export enum StrokeLineCap {
+enum StrokeLineCap {
   Butt = "butt",
   Round = "round",
   Square = "square",
   Inherit = "inherit"
 }
 
-export enum GaugeType {
+enum GaugeType {
   Standart = "standard",
   Sphere = "sphere",
   Minimal = "minimal",
   Light = "light"
 }
 
-export enum ClassNameColors {
+enum ClassNameColors {
   Green = "gauge-progress-color",
   Yellow = "gauge-warning-progress-color",
   Red = "gauge-critical-progress-color",
@@ -63,4 +63,13 @@ export interface GaugeParams {
   label?: string;
 }
 
-export { Gauge, GaugeSphere, GaugeStandard, GaugeLight, GaugeMinimal };
+export {
+  Gauge,
+  GaugeSphere,
+  GaugeStandard,
+  GaugeLight,
+  GaugeMinimal,
+  GaugeType,
+  ClassNameColors,
+  StrokeLineCap
+};
