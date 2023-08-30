@@ -1,5 +1,12 @@
-import {  useEvaState } from "@eva-ics/webengine-react";
-import {GaugeLight, GaugeMinimal, GaugeParams, GaugeSphere, GaugeStandard, GaugeType} from "./index";
+import { useEvaState } from "../common";
+import {
+  GaugeLight,
+  GaugeMinimal,
+  GaugeParams,
+  GaugeSphere,
+  GaugeStandard,
+  GaugeType
+} from "./index";
 
 const Gauge = ({
   oid,
@@ -26,7 +33,7 @@ const Gauge = ({
   needleOffset,
   middleRadius,
   showValue,
-  label,
+  label
 }: GaugeParams) => {
   const state = useEvaState({ oid, engine });
   const { value } = state;

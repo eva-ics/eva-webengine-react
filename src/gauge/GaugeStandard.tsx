@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from "react";
-import {ClassNameColors, GaugeParams, StrokeLineCap} from "./index";
-import { ItemValue } from "@eva-ics/webengine-react";
-import {useGauge} from "./common.tsx";
-
-
+import { ClassNameColors, GaugeParams, StrokeLineCap } from "./index";
+import { ItemValue } from "../value";
+import { useGauge } from "./common";
 
 const options = {
   value: 0, // Indicator value
@@ -15,12 +13,12 @@ const options = {
   numTicks: 11, // Step of indicator values
   offset: 10, // Distance of indicator line from the center
   arcStrokeWidth: 24, // Indicator line thickness
-  strokeLineCap: StrokeLineCap , // Type of progress line
+  strokeLineCap: StrokeLineCap, // Type of progress line
   tickLength: 10, // Length of ticks
   baseRadius: 12, // Radius of central point of arrow indicator
   middleRadius: 24, //Radius of middle circle of arrow indicator
   tipRadius: 2, // Radius of end point of arrow indicator
-  needleOffset: 35, // Length of arrow indicator
+  needleOffset: 35 // Length of arrow indicator
 };
 
 const GaugeStandard = ({
@@ -48,7 +46,7 @@ const GaugeStandard = ({
   baseRadius = options.baseRadius,
   tipRadius = options.tipRadius,
   needleOffset = options.needleOffset,
-  middleRadius = options.middleRadius,
+  middleRadius = options.middleRadius
 }: GaugeParams) => {
   const [progressColorOfValue, setProgressColorOfValue] = useState(
     ClassNameColors.Green
@@ -94,20 +92,20 @@ const GaugeStandard = ({
     angleToValue,
     getArcProps,
     getNeedleProps,
-    getSVGProps,
+    getSVGProps
   } = useGauge({
     startAngle,
     endAngle,
     numTicks,
     diameter,
-    domain: [minValue, maxValue],
+    domain: [minValue, maxValue]
   });
 
   const { tip, base, points } = getNeedleProps({
     value,
     baseRadius,
     tipRadius,
-    offset: needleOffset,
+    offset: needleOffset
   });
 
   return (
@@ -118,7 +116,7 @@ const GaugeStandard = ({
             {...getArcProps({
               offset,
               startAngle,
-              endAngle,
+              endAngle
             })}
             fill="none"
             className="gauge-progress-background-color"
@@ -130,7 +128,7 @@ const GaugeStandard = ({
               {...getArcProps({
                 offset,
                 startAngle,
-                endAngle: valueToAngle(value),
+                endAngle: valueToAngle(value)
               })}
               fill="none"
               className={progressColorOfValue}

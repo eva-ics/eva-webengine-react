@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
-import {ClassNameColors, GaugeParams, StrokeLineCap} from "./index";
-import { ItemValue } from "@eva-ics/webengine-react";
-import {useGauge} from "./common.tsx";
-
+import { ClassNameColors, GaugeParams, StrokeLineCap } from "./index";
+import { ItemValue } from "../value";
+import { useGauge } from "./common";
 
 const options = {
   value: 0, // Indicator value
@@ -19,7 +18,7 @@ const options = {
   baseRadius: 5, // Radius of central point of arrow indicator
   middleRadius: 15, //Radius of middle circle of arrow indicator
   tipRadius: 2, // Radius of end point of arrow indicator
-  needleOffset: 30, // Length of arrow indicator
+  needleOffset: 30 // Length of arrow indicator
 };
 
 const GaugeMinimal = ({
@@ -47,7 +46,7 @@ const GaugeMinimal = ({
   baseRadius = options.baseRadius,
   tipRadius = options.tipRadius,
   needleOffset = options.needleOffset,
-  middleRadius = options.middleRadius,
+  middleRadius = options.middleRadius
 }: GaugeParams) => {
   const [progressColorOfValue, setProgressColorOfValue] = useState(
     ClassNameColors.Green
@@ -93,20 +92,20 @@ const GaugeMinimal = ({
     angleToValue,
     getArcProps,
     getNeedleProps,
-    getSVGProps,
+    getSVGProps
   } = useGauge({
     startAngle,
     endAngle,
     numTicks,
     diameter,
-    domain: [minValue, maxValue],
+    domain: [minValue, maxValue]
   });
 
   const { tip, base, points } = getNeedleProps({
     value,
     baseRadius,
     tipRadius,
-    offset: needleOffset,
+    offset: needleOffset
   });
 
   return (
@@ -117,7 +116,7 @@ const GaugeMinimal = ({
             {...getArcProps({
               offset,
               startAngle,
-              endAngle,
+              endAngle
             })}
             fill="none"
             className="gauge-progress-background-color"
@@ -129,7 +128,7 @@ const GaugeMinimal = ({
               {...getArcProps({
                 offset,
                 startAngle,
-                endAngle: valueToAngle(value),
+                endAngle: valueToAngle(value)
               })}
               fill="none"
               className={progressColorOfValue}
