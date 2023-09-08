@@ -17,7 +17,7 @@ interface CanvasPosition {
 }
 
 interface EvaStateParams {
-  oid: string;
+  oid?: string;
   engine?: Eva;
 }
 

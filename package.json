@@ -1,6 +1,6 @@
 {
   "name": "@eva-ics/webengine-react",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "type": "module",
   "description": "React components for EVA ICS HMI Web Engine",
   "scripts": {
@@ -41,7 +41,7 @@
   "homepage": "https://www.eva-ics.com/",
   "peerDependencies": {
     "@altertech/jsaltt": "0.1.14",
-    "@eva-ics/webengine": "^0.5.15",
+    "@eva-ics/webengine": "^0.5.18",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-qrious": "^2.5.6",
@@ -50,7 +50,7 @@
   },
   "devDependencies": {
     "@altertech/jsaltt": "0.1.14",
-    "@eva-ics/webengine": "^0.5.15",
+    "@eva-ics/webengine": "^0.5.18",
     "@types/react": "^18.0.37",
     "@types/react-dom": "^18.0.11",
     "@vitejs/plugin-react": "^4.0.0",

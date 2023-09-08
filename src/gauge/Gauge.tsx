@@ -9,9 +9,10 @@ import {
 } from "./index";
 
 const Gauge = ({
-  oid,
   minValue,
   maxValue,
+  oid,
+  state,
   type,
   engine,
   digits,
@@ -35,17 +36,16 @@ const Gauge = ({
   showValue,
   label
 }: GaugeParams) => {
-  const state = useEvaState({ oid, engine });
-  const { value } = state;
+  state = state ? state : useEvaState({ oid, engine });
 
   switch (type) {
     case GaugeType.Sphere:
       return (
         <GaugeSphere
-          oid={oid}
-          value={value}
           minValue={minValue}
           maxValue={maxValue}
+          oid={oid}
+          state={state}
           engine={engine}
           digits={digits}
           units={units}
@@ -72,10 +72,10 @@ const Gauge = ({
     case GaugeType.Light:
       return (
         <GaugeLight
-          oid={oid}
-          value={value}
           minValue={minValue}
           maxValue={maxValue}
+          oid={oid}
+          state={state}
           engine={engine}
           digits={digits}
           units={units}
@@ -102,10 +102,10 @@ const Gauge = ({
     case GaugeType.Minimal:
       return (
         <GaugeMinimal
-          oid={oid}
-          value={value}
           minValue={minValue}
           maxValue={maxValue}
+          oid={oid}
+          state={state}
           engine={engine}
           digits={digits}
           units={units}
@@ -132,10 +132,10 @@ const Gauge = ({
     default:
       return (
         <GaugeStandard
-          oid={oid}
-          value={value}
           minValue={minValue}
           maxValue={maxValue}
+          oid={oid}
+          state={state}
           engine={engine}
           digits={digits}
           units={units}

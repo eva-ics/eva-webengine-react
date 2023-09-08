@@ -4,7 +4,6 @@ import { ItemValue } from "../value";
 import { useGauge } from "./common";
 
 const options = {
-  value: 0, // Indicator value
   diameter: 200, // GaugeStandard diameter value
   minValue: 0, // Minimum value indicator
   maxValue: 100, // Maximum value indicator
@@ -22,9 +21,10 @@ const options = {
 };
 
 const GaugeStandard = ({
-  oid,
   minValue,
   maxValue,
+  oid,
+  state,
   warnValue,
   critValue,
   engine,
@@ -34,7 +34,6 @@ const GaugeStandard = ({
   format_with,
   showValue,
   label,
-  value = options.value,
   diameter = options.diameter,
   startAngle = options.startAngle,
   endAngle = options.endAngle,
@@ -51,6 +50,7 @@ const GaugeStandard = ({
   const [progressColorOfValue, setProgressColorOfValue] = useState(
     ClassNameColors.Green
   );
+  let value = state ? state.value : NaN;
 
   if (value > maxValue) {
     value = maxValue;
@@ -171,6 +171,7 @@ const GaugeStandard = ({
               <ItemValue
                 engine={engine}
                 oid={oid}
+                state={state}
                 digits={digits}
                 units={units}
                 threshold={threshold}

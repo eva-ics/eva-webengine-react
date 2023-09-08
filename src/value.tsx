@@ -1,8 +1,9 @@
-import { Eva } from "@eva-ics/webengine";
+import { Eva, ItemState } from "@eva-ics/webengine";
 import { useEvaState, CanvasPosition } from "./common";
 
 interface ItemValueDisplay {
-  oid: string;
+  oid?: string;
+  state?: ItemState;
   label?: string;
   units?: string;
   format_with?: (value: any) => any;
@@ -42,10 +43,13 @@ const ItemValueTable = ({
         {items.map((v) => {
           return (
             <tr key={v.oid} className="eva state valuetable">
-              <td className="eva state valuetable label">{v.label || v.oid}</td>
+              <td className="eva state valuetable label">
+                {v.label || v.oid || ""}
+              </td>
               <td className="eva state valuetable value">
                 <ItemValue
                   oid={v.oid}
+                  state={v.state}
                   digits={v.digits}
                   units={v.units}
                   threshold={v.threshold}
@@ -63,31 +67,33 @@ const ItemValueTable = ({
 
 const ItemValue = ({
   oid,
+  state,
   digits,
   units,
   threshold,
   format_with,
   engine
 }: {
-  oid: string;
+  oid?: string;
+  state?: ItemState;
   digits?: number;
   units?: string;
   threshold?: Array<ItemValueThreshold>;
   format_with?: (value: any) => any;
   engine?: Eva;
 }) => {
-  const state = useEvaState({ oid: oid, engine });
+  state = state ? state : useEvaState({ oid: oid, engine });
 
   let cls = "";
   switch (state.status) {
-    case 1:
-      cls += " ok";
-      break;
     case -1:
       cls += " error";
       break;
+    default:
+      cls += " ok";
+      break;
   }
-  if (!state.connected) cls += " disconnected";
+  if (state.connected == false) cls += " disconnected";
   let value;
   if (digits === undefined) {
     value = state.value;

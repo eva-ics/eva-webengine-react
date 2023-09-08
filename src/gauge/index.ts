@@ -9,7 +9,7 @@ import GaugeStandard from "./GaugeStandard";
 import GaugeSphere from "./GaugeSphere";
 import GaugeLight from "./GaugeLight";
 import GaugeMinimal from "./GaugeMinimal";
-import { Eva } from "@eva-ics/webengine";
+import { Eva, ItemState } from "@eva-ics/webengine";
 import { ItemValueThreshold } from "../value";
 
 enum StrokeLineCap {
@@ -35,9 +35,10 @@ enum ClassNameColors {
 }
 
 export interface GaugeParams {
-  oid: string;
   minValue: number;
   maxValue: number;
+  oid?: string;
+  state?: ItemState;
   type?: GaugeType;
   engine?: Eva;
   value?: number;
