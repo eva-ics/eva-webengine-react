@@ -82,7 +82,8 @@ const ItemValue = ({
   format_with?: (value: any) => any;
   engine?: Eva;
 }) => {
-  state = state ? state : useEvaState({ oid: oid, engine });
+  const eva_state = useEvaState({ oid: oid, engine });
+  state = state ? state : eva_state;
 
   let cls = "";
   switch (state.status) {

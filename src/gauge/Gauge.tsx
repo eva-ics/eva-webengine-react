@@ -36,7 +36,8 @@ const Gauge = ({
   showValue,
   label
 }: GaugeParams) => {
-  state = state ? state : useEvaState({ oid, engine });
+  const eva_state = useEvaState({ oid: oid, engine });
+  state = state ? state : eva_state;
 
   switch (type) {
     case GaugeType.Sphere:
