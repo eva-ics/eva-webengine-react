@@ -119,7 +119,8 @@ const ControlButtonToggle = ({
   css_class,
   engine,
   on_success,
-  on_fail
+  on_fail,
+  disabled_action
 }: {
   oid: string;
   label?: string;
@@ -127,11 +128,15 @@ const ControlButtonToggle = ({
   engine?: Eva;
   on_success?: (result: ActionResult) => void;
   on_fail?: (err: EvaError) => void;
+  disabled_action: boolean;
 }) => {
   const state = useEvaState({ oid: oid, engine });
 
   const handle_action = (e: ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
+    if (disabled_action) {
+      return;
+    }
     const eva_engine: Eva = engine || (get_engine() as Eva);
     eva_engine.action
       .toggle(oid, true)
@@ -164,7 +169,8 @@ const ControlButtonValue = ({
   input_size,
   engine,
   on_success,
-  on_fail
+  on_fail,
+  disabled_action
 }: {
   oid: string;
   label?: string;
@@ -173,6 +179,7 @@ const ControlButtonValue = ({
   engine?: Eva;
   on_success?: (result: ActionResult) => void;
   on_fail?: (err: EvaError) => void;
+  disabled_action: boolean;
 }) => {
   const state = useEvaState({ oid: oid, engine });
   const [value, setValue] = useState(state.value);
@@ -181,6 +188,9 @@ const ControlButtonValue = ({
 
   const handle_action = (e: MouseEvent) => {
     e.preventDefault();
+    if (disabled_action) {
+      return;
+    }
     const eva_engine: Eva = engine || (get_engine() as Eva);
     if (value === undefined) return;
     let val: string | number = parseFloat(value);
@@ -247,7 +257,8 @@ const ControlButtonRun = ({
   css_class,
   engine,
   on_success,
-  on_fail
+  on_fail,
+  disabled_action
 }: {
   oid: string;
   params?: object;
@@ -257,11 +268,15 @@ const ControlButtonRun = ({
   engine?: Eva;
   on_success?: (result: ActionResult) => void;
   on_fail?: (err: EvaError) => void;
+  disabled_action: boolean;
 }) => {
   const state_busy = useEvaState({ oid: busy, engine });
 
   const handle_action = (e: MouseEvent) => {
     e.preventDefault();
+    if (disabled_action) {
+      return;
+    }
     const eva_engine: Eva = engine || (get_engine() as Eva);
     eva_engine.action
       .run(oid, params, true)
