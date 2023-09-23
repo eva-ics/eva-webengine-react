@@ -1,6 +1,7 @@
 import { useEvaStateHistory } from "./common";
 import { Line } from "react-chartjs-2";
 import { Eva, StateProp } from "@eva-ics/webengine";
+import { deepMerge } from "@altertech/jsaltt";
 
 const LineChart = ({
   oid,
@@ -109,68 +110,66 @@ const LineChart = ({
           ct_unit = "minute";
           ct_format = "HH:mm:ss";
       }
-      let chart_ops = {
-        ...{
-          responsive: true,
-          scales: {
-            y: {
-              type: "linear",
-              display: true,
-              position: "left"
-            },
-            y1: {
-              type: "linear",
-              display: true,
-              position: "right",
+      const default_chart_ops = {
+        responsive: true,
+        scales: {
+          y: {
+            type: "linear",
+            display: true,
+            position: "left"
+          },
+          y1: {
+            type: "linear",
+            display: true,
+            position: "right",
 
-              grid: {
-                drawOnChartArea: false // only want the grid lines for one axis to show up
-              }
+            grid: {
+              drawOnChartArea: false // only want the grid lines for one axis to show up
+            }
+          },
+          x: {
+            type: "time",
+            time: {
+              unit: ct_unit,
+              unitStepSize: 1,
+              round: ct_unit,
+              tooltipFormat: ct_format
             },
-            x: {
-              type: "time",
-              time: {
-                unit: ct_unit,
-                unitStepSize: 1,
-                round: ct_unit,
-                tooltipFormat: ct_format
-              },
-              ticks: {
-                fontSize: 12,
-                fontColor: "#ccc",
-                maxTicksLimit: 8,
-                maxRotation: 0,
-                autoSkip: true,
-                callback: function (
-                  value: any,
-                  index: number,
-                  values: Array<any>
-                ): any {
-                  if (index === values.length - 1) {
-                    return "";
-                  } else {
-                    return (this as any).getLabelForValue(value).split(" ");
-                  }
+            ticks: {
+              fontSize: 12,
+              fontColor: "#ccc",
+              maxTicksLimit: 8,
+              maxRotation: 0,
+              autoSkip: true,
+              callback: function (
+                value: any,
+                index: number,
+                values: Array<any>
+              ): any {
+                if (index === values.length - 1) {
+                  return "";
+                } else {
+                  return (this as any).getLabelForValue(value).split(" ");
                 }
               }
             }
-          },
-          plugins: {
-            filler: {
-              propagate: true
-            },
-            title: {
-              text: title,
-              display: true
-            },
-            legend: {
-              display: xidx > 1,
-              position: "top"
-            }
           }
         },
-        ...options
+        plugins: {
+          filler: {
+            propagate: true
+          },
+          title: {
+            text: title,
+            display: true
+          },
+          legend: {
+            display: xidx > 1,
+            position: "top"
+          }
+        }
       };
+      let chart_ops = deepMerge(default_chart_ops, options);
       return (
         <div className="eva chart container">
           <Line datasetIdKey="id" data={data} options={chart_ops} />
