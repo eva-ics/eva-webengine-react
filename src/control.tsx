@@ -120,7 +120,7 @@ const ControlButtonToggle = ({
   engine,
   on_success,
   on_fail,
-  disabled_action
+  disabled_actions
 }: {
   oid: string;
   label?: string;
@@ -128,13 +128,13 @@ const ControlButtonToggle = ({
   engine?: Eva;
   on_success?: (result: ActionResult) => void;
   on_fail?: (err: EvaError) => void;
-  disabled_action?: boolean;
+  disabled_actions?: boolean;
 }) => {
   const state = useEvaState({ oid: oid, engine });
 
   const handle_action = (e: ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
-    if (disabled_action) {
+    if (disabled_actions) {
       return;
     }
     const eva_engine: Eva = engine || (get_engine() as Eva);
@@ -170,7 +170,7 @@ const ControlButtonValue = ({
   engine,
   on_success,
   on_fail,
-  disabled_action
+  disabled_actions
 }: {
   oid: string;
   label?: string;
@@ -179,7 +179,7 @@ const ControlButtonValue = ({
   engine?: Eva;
   on_success?: (result: ActionResult) => void;
   on_fail?: (err: EvaError) => void;
-  disabled_action?: boolean;
+  disabled_actions?: boolean;
 }) => {
   const state = useEvaState({ oid: oid, engine });
   const [value, setValue] = useState(state.value);
@@ -188,7 +188,7 @@ const ControlButtonValue = ({
 
   const handle_action = (e: MouseEvent) => {
     e.preventDefault();
-    if (disabled_action) {
+    if (disabled_actions) {
       return;
     }
     const eva_engine: Eva = engine || (get_engine() as Eva);
@@ -258,7 +258,7 @@ const ControlButtonRun = ({
   engine,
   on_success,
   on_fail,
-  disabled_action
+  disabled_actions
 }: {
   oid: string;
   params?: object;
@@ -268,13 +268,13 @@ const ControlButtonRun = ({
   engine?: Eva;
   on_success?: (result: ActionResult) => void;
   on_fail?: (err: EvaError) => void;
-  disabled_action?: boolean;
+  disabled_actions?: boolean;
 }) => {
   const state_busy = useEvaState({ oid: busy, engine });
 
   const handle_action = (e: MouseEvent) => {
     e.preventDefault();
-    if (disabled_action) {
+    if (disabled_actions) {
       return;
     }
     const eva_engine: Eva = engine || (get_engine() as Eva);
