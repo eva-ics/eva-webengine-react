@@ -1,4 +1,10 @@
-import { Eva, EvaError, StateProp, ItemState } from "@eva-ics/webengine";
+import {
+  Eva,
+  EvaError,
+  EvaErrorKind,
+  StateProp,
+  ItemState
+} from "@eva-ics/webengine";
 import { useState, useEffect, useRef, useCallback } from "react";
 
 let eva: Eva | null = null;
@@ -22,7 +28,7 @@ interface EvaStateParams {
 }
 
 interface EvaStateHistoryParams {
-  oid: string | Array<string>;
+  oid?: string | Array<string>;
   timeframe: string | Array<string>;
   update?: number;
   prop?: StateProp;
@@ -136,7 +142,17 @@ const useEvaStateHistory = (params: EvaStateHistoryParams) => {
     visible.current = true;
     if (!update_worker.current) {
       if (eva_engine) {
-        updateHistory();
+        if (params.oid) {
+          updateHistory();
+        } else {
+          setState({
+            data: null,
+            error: new EvaError(
+              EvaErrorKind.INVALID_PARAMS,
+              "OID not specified"
+            )
+          });
+        }
       } else {
         throw new Error("EVA ICS WebEngine not set");
       }
