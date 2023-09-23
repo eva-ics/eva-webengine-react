@@ -128,7 +128,7 @@ const ControlButtonToggle = ({
   engine?: Eva;
   on_success?: (result: ActionResult) => void;
   on_fail?: (err: EvaError) => void;
-  disabled_action: boolean;
+  disabled_action?: boolean;
 }) => {
   const state = useEvaState({ oid: oid, engine });
 
@@ -179,7 +179,7 @@ const ControlButtonValue = ({
   engine?: Eva;
   on_success?: (result: ActionResult) => void;
   on_fail?: (err: EvaError) => void;
-  disabled_action: boolean;
+  disabled_action?: boolean;
 }) => {
   const state = useEvaState({ oid: oid, engine });
   const [value, setValue] = useState(state.value);
@@ -268,7 +268,7 @@ const ControlButtonRun = ({
   engine?: Eva;
   on_success?: (result: ActionResult) => void;
   on_fail?: (err: EvaError) => void;
-  disabled_action: boolean;
+  disabled_action?: boolean;
 }) => {
   const state_busy = useEvaState({ oid: busy, engine });
 
