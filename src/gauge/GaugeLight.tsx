@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { ClassNameColors, GaugeParams, StrokeLineCap } from "./index";
+import { ClassNameColors,  calculateColor, GaugeParams, StrokeLineCap } from "./index";
 import { ItemValue } from "../value";
 import { useGauge } from "./common";
 
@@ -27,6 +27,8 @@ const GaugeLight = ({
   state,
   warnValue,
   critValue,
+  lowWarnValue,
+  lowCritValue,
   engine,
   digits,
   units,
@@ -47,42 +49,17 @@ const GaugeLight = ({
   needleOffset = options.needleOffset,
   middleRadius = options.middleRadius
 }: GaugeParams) => {
-  const [progressColorOfValue, setProgressColorOfValue] = useState(
-    ClassNameColors.Green
-  );
+
   let value = state ? state.value : NaN;
+  const color = calculateColor(value, warnValue, critValue, lowWarnValue, lowCritValue);
+
+  console.log(color);
 
   if (value > maxValue) {
     value = maxValue;
+  } else if (value < minValue) {
+    value = minValue;
   }
-
-  useEffect(() => {
-    if (warnValue === undefined && critValue === undefined) {
-      setProgressColorOfValue(ClassNameColors.Green);
-    } else if (critValue === undefined) {
-      setProgressColorOfValue(
-        value < warnValue! ? ClassNameColors.Green : ClassNameColors.Yellow
-      );
-    } else if (warnValue === undefined) {
-      setProgressColorOfValue(
-        value < critValue ? ClassNameColors.Green : ClassNameColors.Red
-      );
-    } else {
-      switch (true) {
-        case value >= minValue && value < warnValue:
-          setProgressColorOfValue(ClassNameColors.Green);
-          break;
-        case value > warnValue && value < critValue:
-          setProgressColorOfValue(ClassNameColors.Yellow);
-          break;
-        case value >= critValue:
-          setProgressColorOfValue(ClassNameColors.Red);
-          break;
-        default:
-          return;
-      }
-    }
-  }, [value, warnValue, critValue, minValue, maxValue, progressColorOfValue]);
 
   const {
     ticks,
@@ -131,7 +108,7 @@ const GaugeLight = ({
                 endAngle: valueToAngle(value)
               })}
               fill="none"
-              className={progressColorOfValue}
+              className={color}
               strokeWidth={arcStrokeWidth}
               strokeLinecap={strokeLineCap}
             />

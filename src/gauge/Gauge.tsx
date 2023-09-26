@@ -22,6 +22,8 @@ const Gauge = ({
   diameter,
   warnValue,
   critValue,
+  lowWarnValue,
+  lowCritValue,
   startAngle,
   endAngle,
   numTicks,
@@ -55,6 +57,8 @@ const Gauge = ({
           diameter={diameter}
           warnValue={warnValue}
           critValue={critValue}
+          lowWarnValue={lowWarnValue}
+          lowCritValue={lowCritValue}
           startAngle={startAngle}
           endAngle={endAngle}
           numTicks={numTicks}
@@ -85,6 +89,8 @@ const Gauge = ({
           diameter={diameter}
           warnValue={warnValue}
           critValue={critValue}
+          lowWarnValue={lowWarnValue}
+          lowCritValue={lowCritValue}
           startAngle={startAngle}
           endAngle={endAngle}
           numTicks={numTicks}
@@ -115,6 +121,8 @@ const Gauge = ({
           diameter={diameter}
           warnValue={warnValue}
           critValue={critValue}
+          lowWarnValue={lowWarnValue}
+          lowCritValue={lowCritValue}
           startAngle={startAngle}
           endAngle={endAngle}
           numTicks={numTicks}
@@ -145,6 +153,8 @@ const Gauge = ({
           diameter={diameter}
           warnValue={warnValue}
           critValue={critValue}
+          lowWarnValue={lowWarnValue}
+          lowCritValue={lowCritValue}
           startAngle={startAngle}
           endAngle={endAngle}
           numTicks={numTicks}

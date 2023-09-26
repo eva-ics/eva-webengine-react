@@ -49,6 +49,8 @@ export interface GaugeParams {
   diameter?: number;
   warnValue?: number;
   critValue?: number;
+  lowWarnValue?: number;
+  lowCritValue?: number;
   startAngle?: number;
   endAngle?: number;
   numTicks?: number;
@@ -63,6 +65,31 @@ export interface GaugeParams {
   showValue?: boolean;
   label?: string;
 }
+
+export const calculateColor = (
+  value?: number,
+  warnValue?: number,
+  critValue?: number,
+  lowWarnValue?: number,
+  lowCritValue?: number
+) => {
+  if (value === undefined || isNaN(value)) {
+    return ClassNameColors.Green;
+  }
+  if (lowCritValue !== undefined && value <= lowCritValue) {
+    return ClassNameColors.Red;
+  }
+  if (lowWarnValue !== undefined && value <= lowWarnValue) {
+    return ClassNameColors.Yellow;
+  }
+  if (critValue !== undefined && value >= critValue) {
+    return ClassNameColors.Red;
+  }
+  if (warnValue !== undefined && value >= warnValue) {
+    return ClassNameColors.Yellow;
+  }
+  return ClassNameColors.Green;
+};
 
 export {
   Gauge,
