@@ -1,7 +1,7 @@
 import { useEvaState } from "../common";
 import {
   GaugeLight,
-  GaugeMinimal,
+  GaugeMinimal, GaugeModern,
   GaugeParams,
   GaugeSphere,
   GaugeStandard,
@@ -137,6 +137,33 @@ const Gauge = ({
           showValue={showValue}
           label={label}
         />
+      );
+    case GaugeType.Modern:
+      return (
+          <GaugeModern
+              minValue={minValue}
+              maxValue={maxValue}
+              oid={oid}
+              state={state}
+              engine={engine}
+              digits={digits}
+              units={units}
+              threshold={threshold}
+              format_with={format_with}
+              diameter={diameter}
+              warnValue={warnValue}
+              critValue={critValue}
+              lowWarnValue={lowWarnValue}
+              lowCritValue={lowCritValue}
+              startAngle={startAngle}
+              endAngle={endAngle}
+              numTicks={numTicks}
+              offset={offset}
+              arcStrokeWidth={arcStrokeWidth}
+              strokeLineCap={strokeLineCap}
+              showValue={showValue}
+              label={label}
+          />
       );
     default:
       return (
