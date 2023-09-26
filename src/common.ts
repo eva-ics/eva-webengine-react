@@ -49,7 +49,7 @@ const useEvaState = (params: EvaStateParams) => {
         throw new Error("EVA ICS WebEngine not set");
       }
     } else {
-      setState({});
+      setState({} as ItemState);
     }
     return () => {
       if (eva_engine && params.oid) {
