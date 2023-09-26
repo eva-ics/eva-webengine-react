@@ -48,6 +48,8 @@ const useEvaState = (params: EvaStateParams) => {
       } else {
         throw new Error("EVA ICS WebEngine not set");
       }
+    } else {
+      setState({});
     }
     return () => {
       if (eva_engine && params.oid) {
@@ -167,7 +169,7 @@ const useEvaStateHistory = (params: EvaStateHistoryParams) => {
 };
 
 interface EvaAPICallParams {
-  method: string;
+  method?: string;
   params?: object;
   update?: number;
   engine?: Eva;
@@ -179,7 +181,7 @@ interface APICallData {
 }
 
 const useEvaAPICall = (params: EvaAPICallParams) => {
-  const [state, setState] = useState({ data: null } as APICallData);
+  const [state, setState] = useState<APICallData>({ data: null });
   const visible = useRef(false);
   const update_worker: any = useRef(null);
 
@@ -199,7 +201,7 @@ const useEvaAPICall = (params: EvaAPICallParams) => {
     if (eva_engine && eva_engine.logged_in) {
       eva_engine!
         .call(params.method, params.params)
-        .then((result) => {
+        .then((result: any) => {
           setState({ data: result });
         })
         .catch((err: EvaError) => {
@@ -215,7 +217,17 @@ const useEvaAPICall = (params: EvaAPICallParams) => {
     visible.current = true;
     if (!update_worker.current) {
       if (eva_engine) {
-        updateData();
+        if (params.method) {
+          updateData();
+        } else {
+          setState({
+            data: null,
+            error: new EvaError(
+              EvaErrorKind.INVALID_PARAMS,
+              "method not specified"
+            )
+          });
+        }
       } else {
         throw new Error("EVA ICS WebEngine not set");
       }
