@@ -9,6 +9,7 @@ import GaugeStandard from "./GaugeStandard";
 import GaugeSphere from "./GaugeSphere";
 import GaugeLight from "./GaugeLight";
 import GaugeMinimal from "./GaugeMinimal";
+import GaugeModern from "./GaugeModern";
 import { Eva, ItemState } from "@eva-ics/webengine";
 import { ItemValueThreshold } from "../value";
 
@@ -74,6 +75,7 @@ export {
   GaugeStandard,
   GaugeLight,
   GaugeMinimal,
+  GaugeModern,
   GaugeType,
   GaugeProgressColor,
   StrokeLineCap
