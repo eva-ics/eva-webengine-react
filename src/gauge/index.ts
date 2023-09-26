@@ -24,7 +24,8 @@ enum GaugeType {
   Standart = "standard",
   Sphere = "sphere",
   Minimal = "minimal",
-  Light = "light"
+  Light = "light",
+Modern="modern"
 }
 
 enum GaugeProgressColor {
