@@ -30,6 +30,6 @@ export { LineChart } from "./chart";
 export {
   GaugeType,
   StrokeLineCap as GaugeStrokeLineCap,
-  ClassNameColors as GaugeClassNameColors,
+  GaugeProgressColor as GaugeClassNameColors,
   Gauge
 } from "./gauge";

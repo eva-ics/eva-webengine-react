@@ -26,10 +26,10 @@ enum GaugeType {
   Light = "light"
 }
 
-enum ClassNameColors {
-  Green = "gauge-progress-color",
-  Yellow = "gauge-warning-progress-color",
-  Red = "gauge-critical-progress-color",
+enum GaugeProgressColor {
+  Normal = "gauge-progress-color",
+  Warning = "gauge-warning-progress-color",
+  Critical = "gauge-critical-progress-color",
   Tick = "gauge-tick-color",
   Needle = "gauge-needle-color"
 }
@@ -66,30 +66,7 @@ export interface GaugeParams {
   label?: string;
 }
 
-export const calculateColor = (
-  value?: number,
-  warnValue?: number,
-  critValue?: number,
-  lowWarnValue?: number,
-  lowCritValue?: number
-) => {
-  if (value === undefined || isNaN(value)) {
-    return ClassNameColors.Green;
-  }
-  if (lowCritValue !== undefined && value <= lowCritValue) {
-    return ClassNameColors.Red;
-  }
-  if (lowWarnValue !== undefined && value <= lowWarnValue) {
-    return ClassNameColors.Yellow;
-  }
-  if (critValue !== undefined && value >= critValue) {
-    return ClassNameColors.Red;
-  }
-  if (warnValue !== undefined && value >= warnValue) {
-    return ClassNameColors.Yellow;
-  }
-  return ClassNameColors.Green;
-};
+
 
 export {
   Gauge,
@@ -98,6 +75,6 @@ export {
   GaugeLight,
   GaugeMinimal,
   GaugeType,
-  ClassNameColors,
+  GaugeProgressColor,
   StrokeLineCap
 };

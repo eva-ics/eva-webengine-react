@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from "react";
-import { ClassNameColors, GaugeParams, StrokeLineCap } from "./index";
+import React from "react";
+import { GaugeProgressColor, GaugeParams, StrokeLineCap } from "./index";
+import { calculateColor,useGauge } from "./common";
 import { ItemValue } from "../value";
-import { useGauge } from "./common";
+
 
 const options = {
   diameter: 200, // GaugeStandard diameter value
@@ -27,6 +28,8 @@ const GaugeStandard = ({
   state,
   warnValue,
   critValue,
+  lowCritValue,
+  lowWarnValue,
   engine,
   digits,
   units,
@@ -47,42 +50,21 @@ const GaugeStandard = ({
   needleOffset = options.needleOffset,
   middleRadius = options.middleRadius
 }: GaugeParams) => {
-  const [progressColorOfValue, setProgressColorOfValue] = useState(
-    ClassNameColors.Green
-  );
+
   let value = state ? state.value : NaN;
+  const color = calculateColor(
+    value,
+    warnValue,
+    critValue,
+    lowWarnValue,
+    lowCritValue
+  );
 
   if (value > maxValue) {
     value = maxValue;
+  } else if (value < minValue) {
+    value = minValue;
   }
-
-  useEffect(() => {
-    if (warnValue === undefined && critValue === undefined) {
-      setProgressColorOfValue(ClassNameColors.Green);
-    } else if (critValue === undefined) {
-      setProgressColorOfValue(
-        value < warnValue! ? ClassNameColors.Green : ClassNameColors.Yellow
-      );
-    } else if (warnValue === undefined) {
-      setProgressColorOfValue(
-        value < critValue ? ClassNameColors.Green : ClassNameColors.Red
-      );
-    } else {
-      switch (true) {
-        case value >= minValue && value < warnValue:
-          setProgressColorOfValue(ClassNameColors.Green);
-          break;
-        case value > warnValue && value < critValue:
-          setProgressColorOfValue(ClassNameColors.Yellow);
-          break;
-        case value >= critValue:
-          setProgressColorOfValue(ClassNameColors.Red);
-          break;
-        default:
-          return;
-      }
-    }
-  }, [value, warnValue, critValue, minValue, maxValue, progressColorOfValue]);
 
   const {
     ticks,
@@ -131,7 +113,7 @@ const GaugeStandard = ({
                 endAngle: valueToAngle(value)
               })}
               fill="none"
-              className={progressColorOfValue}
+              className={color}
               strokeWidth={arcStrokeWidth}
               strokeLinecap={strokeLineCap}
             />
@@ -140,7 +122,7 @@ const GaugeStandard = ({
             {ticks.map((angle) => (
               <React.Fragment key={`tick-group-${angle}`}>
                 <line
-                  className={ClassNameColors.Tick}
+                  className={GaugeProgressColor.Tick}
                   {...getTickProps({ angle, length: tickLength })}
                 />
                 <text
@@ -158,9 +140,9 @@ const GaugeStandard = ({
               {...base}
               r={middleRadius}
             />
-            <circle className={ClassNameColors.Needle} {...base} />
-            <circle className={ClassNameColors.Needle} {...tip} />
-            <polyline className={ClassNameColors.Needle} points={points} />
+            <circle className={GaugeProgressColor.Needle} {...base} />
+            <circle className={GaugeProgressColor.Needle} {...tip} />
+            <polyline className={GaugeProgressColor.Needle} points={points} />
             <circle className="gauge-midpoint-color" {...base} r={4} />
           </g>
         </svg>

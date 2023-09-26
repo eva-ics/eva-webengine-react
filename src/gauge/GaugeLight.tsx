@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
-import { ClassNameColors,  calculateColor, GaugeParams, StrokeLineCap } from "./index";
+import { GaugeProgressColor, GaugeParams, StrokeLineCap } from "./index";
 import { ItemValue } from "../value";
-import { useGauge } from "./common";
+import {calculateColor, useGauge} from "./common";
+import React from "react";
 
 const options = {
   diameter: 150, // GaugeStandard diameter value
@@ -52,8 +52,6 @@ const GaugeLight = ({
 
   let value = state ? state.value : NaN;
   const color = calculateColor(value, warnValue, critValue, lowWarnValue, lowCritValue);
-
-  console.log(color);
 
   if (value > maxValue) {
     value = maxValue;
@@ -117,7 +115,7 @@ const GaugeLight = ({
             {ticks.map((angle) => (
               <React.Fragment key={`tick-group-${angle}`}>
                 <line
-                  className={ClassNameColors.Tick}
+                  className={GaugeProgressColor.Tick}
                   {...getTickProps({ angle, length: tickLength })}
                 />
                 <text
@@ -135,9 +133,9 @@ const GaugeLight = ({
               {...base}
               r={middleRadius}
             />
-            <circle className={ClassNameColors.Needle} {...base} />
-            <circle className={ClassNameColors.Needle} {...tip} />
-            <polyline className={ClassNameColors.Needle} points={points} />
+            <circle className={GaugeProgressColor.Needle} {...base} />
+            <circle className={GaugeProgressColor.Needle} {...tip} />
+            <polyline className={GaugeProgressColor.Needle} points={points} />
             <circle className="gauge-midpoint-color" {...base} r={4} />
           </g>
         </svg>
