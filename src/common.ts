@@ -266,26 +266,27 @@ const useEvaStateUpdates = (params: EvaStateUpdatesParams) => {
   useEffect(() => {
     let previous: Array<string> | boolean = false;
     if (eva_engine) {
-      if (params.keep) {
-        previous = eva_engine.state_updates;
-      }
-      let state_updates = params.state_updates;
-      if (params.append) {
-        if (eva_engine.state_updates === true) {
-          state_updates = true;
-        } else if (
-          Array.isArray(eva_engine.state_updates) &&
-          Array.isArray(state_updates)
-        ) {
-          state_updates = []
-            .concat(eva_engine.state_updates as any)
-            .concat(state_updates as any);
+      subscription_mutex.acquire().then((release) => {
+        if (params.keep) {
+          previous = eva_engine.state_updates;
         }
-      }
-      if (eva_engine.state_updates === state_updates) {
-        setState(EvaSubscriptionState.Active);
-      } else {
-        subscription_mutex.acquire().then((release) => {
+        let state_updates = params.state_updates;
+        if (params.append) {
+          if (eva_engine.state_updates === true) {
+            state_updates = true;
+          } else if (
+            Array.isArray(eva_engine.state_updates) &&
+            Array.isArray(state_updates)
+          ) {
+            state_updates = []
+              .concat(eva_engine.state_updates as any)
+              .concat(state_updates as any);
+          }
+        }
+        if (eva_engine.state_updates === state_updates) {
+          release();
+          setState(EvaSubscriptionState.Active);
+        } else {
           eva_engine
             .set_state_updates(state_updates, params.clear_existing)
             .then(() => setState(EvaSubscriptionState.Active))
@@ -294,24 +295,26 @@ const useEvaStateUpdates = (params: EvaStateUpdatesParams) => {
               setState(EvaSubscriptionState.Failed);
             })
             .finally(() => release());
-        });
-      }
+        }
+      });
     } else {
       throw new Error("EVA ICS WebEngine not set");
     }
     return () => {
       if (eva_engine) {
-        if (previous !== eva_engine.state_updates) {
-          subscription_mutex.acquire().then((release) => {
+        subscription_mutex.acquire().then((release) => {
+          if (previous === eva_engine.state_updates) {
+            release();
+          } else {
             eva_engine
               .set_state_updates(previous, params.clear_existing)
               .catch((e) => eva_engine.log.error(e))
               .finally(() => release());
-          });
-        }
+          }
+        });
       }
     };
-  });
+  }, []);
   return state;
 };
 
