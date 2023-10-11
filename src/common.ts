@@ -269,6 +269,7 @@ const useEvaStateUpdates = (
   useEffect(() => {
     let previous: Array<string> | boolean = false;
     if (eva_engine) {
+      setState(EvaSubscriptionState.Working);
       subscription_mutex.acquire().then((release) => {
         if (params.keep) {
           previous = eva_engine.state_updates;
