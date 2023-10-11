@@ -3,7 +3,8 @@ export {
   set_engine,
   useEvaState,
   useEvaStateHistory,
-  useEvaAPICall
+  useEvaAPICall,
+  useEvaStateUpdates
 } from "./common";
 export type {
   EvaStateParams,
@@ -11,7 +12,9 @@ export type {
   CanvasPosition,
   EvaAPICallParams,
   APICallData,
-  StateHistoryData
+  StateHistoryData,
+  EvaSubscriptionState,
+  EvaStateUpdatesParams
 } from "./common";
 export type { FunctionLogout, LoginProps } from "./app";
 export { HMIApp } from "./app";

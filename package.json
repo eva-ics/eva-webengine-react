@@ -41,16 +41,16 @@
   "homepage": "https://www.eva-ics.com/",
   "peerDependencies": {
     "@altertech/jsaltt": "^0.1.15",
-    "@eva-ics/webengine": "^0.5.18",
+    "@eva-ics/webengine": "^0.5.20",
+    "chart.js": "^4.1.1",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-qrious": "^2.5.6",
     "react-chartjs-2": "^5.2.0",
-    "chart.js": "^4.1.1"
+    "react-dom": "^18.2.0",
+    "react-qrious": "^2.5.6"
   },
   "devDependencies": {
     "@altertech/jsaltt": "^0.1.15",
-    "@eva-ics/webengine": "^0.5.18",
+    "@eva-ics/webengine": "^0.5.20",
     "@types/react": "^18.0.37",
     "@types/react-dom": "^18.0.11",
     "@vitejs/plugin-react": "^4.0.0",
@@ -59,5 +59,8 @@
     "react-qrious": "^2.5.6",
     "typescript": "^5.0.2",
     "vite": "^4.3.9"
+  },
+  "dependencies": {
+    "async-mutex": "^0.4.0"
   }
 }

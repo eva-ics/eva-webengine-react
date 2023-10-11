@@ -6,8 +6,11 @@ import {
   ItemState
 } from "@eva-ics/webengine";
 import { useState, useEffect, useRef, useCallback } from "react";
+import { Mutex } from "async-mutex";
 
 let eva: Eva | null = null;
+
+let subscription_mutex = new Mutex();
 
 const get_engine = (): Eva | null => {
   return eva;
@@ -198,7 +201,7 @@ const useEvaAPICall = (params: EvaAPICallParams) => {
       update_worker.current = null;
       return;
     }
-    if (eva_engine && eva_engine.logged_in) {
+    if (eva_engine && eva_engine.logged_in && params.method) {
       eva_engine!
         .call(params.method, params.params)
         .then((result: any) => {
@@ -241,6 +244,52 @@ const useEvaAPICall = (params: EvaAPICallParams) => {
   return state;
 };
 
+enum EvaSubscriptionState {
+  Working,
+  Active,
+  Failed
+}
+
+interface EvaStateUpdatesParams {
+  engine?: Eva;
+  state_updates: Array<string> | boolean;
+  clear_existing?: boolean;
+}
+
+const useEvaStateUpdates = (params: EvaStateUpdatesParams) => {
+  const [state, setState] = useState(EvaSubscriptionState.Working);
+
+  const eva_engine: Eva = params.engine || (eva as Eva);
+
+  useEffect(() => {
+    if (eva_engine) {
+      subscription_mutex.acquire().then((release) => {
+        eva_engine
+          .set_state_updates(params.state_updates, params.clear_existing)
+          .then(() => setState(EvaSubscriptionState.Active))
+          .catch((e) => {
+            eva_engine.log.error(e);
+            setState(EvaSubscriptionState.Failed);
+          })
+          .finally(() => release());
+      });
+    } else {
+      throw new Error("EVA ICS WebEngine not set");
+    }
+    return () => {
+      if (eva_engine) {
+        subscription_mutex.acquire().then((release) => {
+          eva_engine
+            .set_state_updates(false, params.clear_existing)
+            .catch((e) => eva_engine.log.error(e))
+            .finally(() => release());
+        });
+      }
+    };
+  });
+  return state;
+};
+
 export {
   get_engine,
   set_engine,
@@ -252,5 +301,8 @@ export {
   EvaStateHistoryParams,
   StateHistoryData,
   EvaAPICallParams,
-  APICallData
+  APICallData,
+  EvaSubscriptionState,
+  EvaStateUpdatesParams,
+  useEvaStateUpdates
 };
