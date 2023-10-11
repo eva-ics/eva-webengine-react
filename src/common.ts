@@ -258,7 +258,10 @@ interface EvaStateUpdatesParams {
   append?: boolean;
 }
 
-const useEvaStateUpdates = (params: EvaStateUpdatesParams) => {
+const useEvaStateUpdates = (
+  params: EvaStateUpdatesParams,
+  dependencies?: any
+) => {
   const [state, setState] = useState(EvaSubscriptionState.Working);
 
   const eva_engine: Eva = params.engine || (eva as Eva);
@@ -314,7 +317,7 @@ const useEvaStateUpdates = (params: EvaStateUpdatesParams) => {
         });
       }
     };
-  }, []);
+  }, dependencies);
   return state;
 };
 
