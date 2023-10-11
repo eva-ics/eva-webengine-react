@@ -275,7 +275,7 @@ const useEvaStateUpdates = (params: EvaStateUpdatesParams) => {
           state_updates = true;
         } else if (
           Array.isArray(eva_engine.state_updates) &&
-          state_updates !== true
+          Array.isArray(state_updates)
         ) {
           state_updates = []
             .concat(eva_engine.state_updates as any)
