@@ -4,7 +4,8 @@ export {
   useEvaState,
   useEvaStateHistory,
   useEvaAPICall,
-  useEvaStateUpdates
+  useEvaStateUpdates,
+  EvaSubscriptionState
 } from "./common";
 export type {
   EvaStateParams,
@@ -13,7 +14,6 @@ export type {
   EvaAPICallParams,
   APICallData,
   StateHistoryData,
-  EvaSubscriptionState,
   EvaStateUpdatesParams
 } from "./common";
 export type { FunctionLogout, LoginProps } from "./app";
