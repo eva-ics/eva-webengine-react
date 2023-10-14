@@ -8,6 +8,7 @@ import {
 import { useState, useEffect, useRef } from "react";
 import { cookies } from "@altertech/jsaltt";
 import { QRious } from "react-qrious";
+import { get_engine } from "./common";
 
 type FunctionLogout = () => void;
 
@@ -55,7 +56,7 @@ const HMIApp = ({
   Dashboard,
   login_props
 }: {
-  engine: Eva;
+  engine?: Eva;
   Dashboard: ({
     engine,
     logout
@@ -69,6 +70,12 @@ const HMIApp = ({
     state: AppStateKind.Loaded
   } as AppState);
 
+  const eva_engine: Eva = engine || (get_engine() as Eva);
+
+  if (!eva_engine) {
+    throw new Error("EVA ICS WebEngine not set");
+  }
+
   const [form, setForm] = useState({
     login: "",
     password: "",
@@ -80,19 +87,19 @@ const HMIApp = ({
       try {
         cookies.erase(CookieNames.Password);
       } catch (e) {}
-      await engine.stop();
+      await eva_engine.stop();
     } catch (e) {}
     setAppState({ state: AppStateKind.Ready });
   };
 
   useEffect(() => {
-    engine.on(EventKind.LoginSuccess, () => {
-      engine.login = "";
-      engine.login_xopts = null;
+    eva_engine.on(EventKind.LoginSuccess, () => {
+      eva_engine.login = "";
+      eva_engine.login_xopts = null;
       if (login_props?.cache_auth) {
         if (form.remember) {
-          if (engine.password) {
-            cookies.create(CookieNames.Password, engine.password);
+          if (eva_engine.password) {
+            cookies.create(CookieNames.Password, eva_engine.password);
           }
         } else {
           try {
@@ -100,26 +107,26 @@ const HMIApp = ({
           } catch (e) {}
         }
       }
-      engine.password = "";
+      eva_engine.password = "";
       setAppState({ state: AppStateKind.Active });
     });
-    engine.on(EventKind.LoginOTPSetup, (msg: SvcMessage) => {
+    eva_engine.on(EventKind.LoginOTPSetup, (msg: SvcMessage) => {
       setAppState({ state: AppStateKind.OtpSetup, svc_msg: msg });
-      engine.login_xopts = null;
+      eva_engine.login_xopts = null;
     });
-    engine.on(EventKind.LoginOTPRequired, () => {
+    eva_engine.on(EventKind.LoginOTPRequired, () => {
       setAppState({ state: AppStateKind.OtpAuth });
-      engine.login_xopts = null;
+      eva_engine.login_xopts = null;
     });
-    engine.on(EventKind.LoginOTPInvalid, () => {
+    eva_engine.on(EventKind.LoginOTPInvalid, () => {
       setAppState({
         state: AppStateKind.OtpAuth,
         err: { code: EvaErrorKind.ACCESS_DENIED }
       });
-      engine.login_xopts = null;
+      eva_engine.login_xopts = null;
     });
-    engine.on(EventKind.LoginFailed, (err: EvaError) => {
-      if (login_props?.cache_auth && engine.password) {
+    eva_engine.on(EventKind.LoginFailed, (err: EvaError) => {
+      if (login_props?.cache_auth && eva_engine.password) {
         try {
           cookies.erase(CookieNames.Password);
         } catch (e) {}
@@ -131,7 +138,7 @@ const HMIApp = ({
   // try to auto login if there is a token in cookies or basic auth is used
   if (app_state.state == AppStateKind.Loaded) {
     setAppState({ state: AppStateKind.LoggingIn });
-    engine.start();
+    eva_engine.start();
   }
 
   let error_msg = app_state.err ? app_state.err.message : "";
@@ -144,11 +151,11 @@ const HMIApp = ({
       error_msg = "";
       // try to repeat login with cached
       if (login_props?.cache_auth) {
-        engine.login = cookies.read(CookieNames.Login) || "";
-        engine.password = cookies.read(CookieNames.Password) || "";
-        if (engine.login && engine.password) {
+        eva_engine.login = cookies.read(CookieNames.Login) || "";
+        eva_engine.password = cookies.read(CookieNames.Password) || "";
+        if (eva_engine.login && eva_engine.password) {
           //setAppState({ state: AppStateKind.LoggingIn });
-          engine.start();
+          eva_engine.start();
         }
       }
     } else {
@@ -171,7 +178,7 @@ const HMIApp = ({
     case AppStateKind.Active:
       return (
         <>
-          <Dashboard engine={engine} logout={logout} />
+          <Dashboard engine={eva_engine} logout={logout} />
         </>
       );
       break;
@@ -180,7 +187,7 @@ const HMIApp = ({
       return (
         <>
           <OtpForm
-            engine={engine}
+            engine={eva_engine}
             app_state={app_state}
             setAppState={setAppState}
             props={login_props}
@@ -194,7 +201,7 @@ const HMIApp = ({
       return (
         <>
           <CredsForm
-            engine={engine}
+            engine={eva_engine}
             form={form}
             setForm={setForm}
             setAppState={setAppState}
