@@ -37,7 +37,8 @@ const LineChart = ({
     prop: prop,
     fill: fill,
     args: args,
-    engine: engine
+    engine: engine,
+    disable_update: disable_update
   });
 
   if (state.data) {

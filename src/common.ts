@@ -30,16 +30,6 @@ interface EvaStateParams {
   engine?: Eva;
 }
 
-interface EvaStateHistoryParams {
-  oid?: string | Array<string>;
-  timeframe: string | Array<string>;
-  update?: number;
-  prop?: StateProp;
-  fill?: string;
-  args?: any;
-  engine?: Eva;
-}
-
 const useEvaState = (params: EvaStateParams) => {
   const [state, setState] = useState({} as ItemState);
 
@@ -66,6 +56,17 @@ const useEvaState = (params: EvaStateParams) => {
 interface StateHistoryData {
   data: any;
   error?: EvaError;
+}
+
+interface EvaStateHistoryParams {
+  oid?: string | Array<string>;
+  timeframe: string | Array<string>;
+  update?: number;
+  prop?: StateProp;
+  fill?: string;
+  args?: any;
+  engine?: Eva;
+  disable_update?: boolean;
 }
 
 const useEvaStateHistory = (params: EvaStateHistoryParams) => {
@@ -149,6 +150,8 @@ const useEvaStateHistory = (params: EvaStateHistoryParams) => {
       if (eva_engine) {
         if (params.oid) {
           updateHistory();
+        } else if (params.disable_update) {
+          setState({ data: null });
         } else {
           setState({
             data: null,
