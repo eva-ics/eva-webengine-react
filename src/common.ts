@@ -170,7 +170,15 @@ const useEvaStateHistory = (params: EvaStateHistoryParams) => {
       clearTimeout(update_worker.current);
       update_worker.current = null;
     };
-  }, [params.oid, updateHistory]);
+  }, [
+    params.oid,
+    params.timeframe,
+    params.prop,
+    params.fill,
+    params.args,
+    update_interval,
+    updateHistory
+  ]);
   return state;
 };
 
