@@ -14,7 +14,6 @@ const LineChart = ({
   labels,
   title,
   options,
-  disable_update,
   engine
 }: {
   oid: string | Array<string>;
@@ -27,18 +26,16 @@ const LineChart = ({
   labels?: Array<string>;
   title?: string;
   options?: any;
-  disable_update?: boolean;
   engine?: Eva;
 }) => {
   const state = useEvaStateHistory({
-    oid: disable_update ? undefined : oid,
+    oid: oid,
     timeframe: timeframe,
     update: update,
     prop: prop,
     fill: fill,
     args: args,
-    engine: engine,
-    disable_update: disable_update
+    engine: engine
   });
 
   if (state.data) {
@@ -182,7 +179,7 @@ const LineChart = ({
       const err = `Error: ${error})`;
       return <div className="eva chart error">{err}</div>;
     }
-  } else if (state.error && !disable_update) {
+  } else if (state.error) {
     const err = `Error: ${state.error.message} (${state.error.code})`;
     return <div className="eva chart error">{err}</div>;
   } else {

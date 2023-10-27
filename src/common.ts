@@ -66,7 +66,6 @@ interface EvaStateHistoryParams {
   fill?: string;
   args?: any;
   engine?: Eva;
-  disable_update?: boolean;
 }
 
 const useEvaStateHistory = (params: EvaStateHistoryParams) => {
@@ -150,8 +149,6 @@ const useEvaStateHistory = (params: EvaStateHistoryParams) => {
       if (eva_engine) {
         if (params.oid) {
           updateHistory();
-        } else if (params.disable_update) {
-          setState({ data: null });
         } else {
           setState({
             data: null,
