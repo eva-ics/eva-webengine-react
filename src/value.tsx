@@ -112,12 +112,12 @@ const ItemValue = ({
       }
     }
   }
-  if (format_with) {
-    value = format_with(value);
-  }
   let color;
   if (set_color_with) {
     color = set_color_with(value);
+  }
+  if (format_with) {
+    value = format_with(value);
   }
   return (
     <span className={`eva state${cls}`} style={{ color: color }}>
