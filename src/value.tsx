@@ -72,6 +72,7 @@ const ItemValue = ({
   units,
   threshold,
   format_with,
+  set_color_with,
   engine
 }: {
   oid?: string;
@@ -80,6 +81,7 @@ const ItemValue = ({
   units?: string;
   threshold?: Array<ItemValueThreshold>;
   format_with?: (value: any) => any;
+  set_color_with?: (value: any) => string;
   engine?: Eva;
 }) => {
   const eva_state = useEvaState({ oid: oid, engine });
@@ -113,8 +115,12 @@ const ItemValue = ({
   if (format_with) {
     value = format_with(value);
   }
+  let color;
+  if (set_color_with) {
+    color = set_color_with(value);
+  }
   return (
-    <span className={`eva state${cls}`}>
+    <span className={`eva state${cls}`} style={{ color: color }}>
       {value}
       {units}
     </span>

@@ -1,6 +1,6 @@
 {
   "name": "@eva-ics/webengine-react",
-  "version": "0.1.30",
+  "version": "0.1.31",
   "type": "module",
   "description": "React components for EVA ICS HMI Web Engine",
   "scripts": {
