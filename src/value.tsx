@@ -81,7 +81,7 @@ const ItemValue = ({
   units?: string;
   threshold?: Array<ItemValueThreshold>;
   format_with?: (value: any) => any;
-  set_color_with?: (value: any) => string;
+  set_color_with?: (value: any) => string | undefined;
   engine?: Eva;
 }) => {
   const eva_state = useEvaState({ oid: oid, engine });
