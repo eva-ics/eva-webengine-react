@@ -1,6 +1,6 @@
 import { GaugeProgressColor, GaugeParams, StrokeLineCap } from "./index";
 import { ItemValue } from "../value";
-import {calculateColor, useGauge} from "./common";
+import { calculateColor, useGauge } from "./common";
 import React from "react";
 
 const options = {
@@ -32,8 +32,11 @@ const GaugeLight = ({
   engine,
   digits,
   units,
+  className,
   threshold,
   format_with,
+  set_color_with,
+  set_class_name_with,
   showValue,
   label,
   diameter = options.diameter,
@@ -49,9 +52,14 @@ const GaugeLight = ({
   needleOffset = options.needleOffset,
   middleRadius = options.middleRadius
 }: GaugeParams) => {
-
   let value = state ? state.value : NaN;
-  const color = calculateColor(value, warnValue, critValue, lowWarnValue, lowCritValue);
+  const color = calculateColor(
+    value,
+    warnValue,
+    critValue,
+    lowWarnValue,
+    lowCritValue
+  );
 
   if (value > maxValue) {
     value = maxValue;
@@ -149,8 +157,11 @@ const GaugeLight = ({
                 state={state}
                 digits={digits}
                 units={units}
+                className={className}
                 threshold={threshold}
                 format_with={format_with}
+                set_color_with={set_color_with}
+                set_class_name_with={set_class_name_with}
               />
             </>
           )}

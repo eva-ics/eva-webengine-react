@@ -1,8 +1,7 @@
 import React from "react";
 import { GaugeProgressColor, GaugeParams, StrokeLineCap } from "./index";
-import { calculateColor,useGauge } from "./common";
+import { calculateColor, useGauge } from "./common";
 import { ItemValue } from "../value";
-
 
 const options = {
   diameter: 120, // GaugeStandard diameter value
@@ -18,7 +17,7 @@ const options = {
   baseRadius: 5, // Radius of central point of arrow indicator
   middleRadius: 15, //Radius of middle circle of arrow indicator
   tipRadius: 2, // Radius of end point of arrow indicator
-  needleOffset: 30, // Length of arrow indicator
+  needleOffset: 30 // Length of arrow indicator
 };
 
 const GaugeMinimal = ({
@@ -33,8 +32,11 @@ const GaugeMinimal = ({
   engine,
   digits,
   units,
+  className,
   threshold,
   format_with,
+  set_color_with,
+  set_class_name_with,
   showValue,
   label,
   diameter = options.diameter,
@@ -48,9 +50,8 @@ const GaugeMinimal = ({
   baseRadius = options.baseRadius,
   tipRadius = options.tipRadius,
   needleOffset = options.needleOffset,
-  middleRadius = options.middleRadius,
+  middleRadius = options.middleRadius
 }: GaugeParams) => {
-
   let value = state ? state.value : NaN;
   const color = calculateColor(
     value,
@@ -74,20 +75,20 @@ const GaugeMinimal = ({
     angleToValue,
     getArcProps,
     getNeedleProps,
-    getSVGProps,
+    getSVGProps
   } = useGauge({
     startAngle,
     endAngle,
     numTicks,
     diameter,
-    domain: [minValue, maxValue],
+    domain: [minValue, maxValue]
   });
 
   const { tip, base, points } = getNeedleProps({
     value,
     baseRadius,
     tipRadius,
-    offset: needleOffset,
+    offset: needleOffset
   });
 
   return (
@@ -98,7 +99,7 @@ const GaugeMinimal = ({
             {...getArcProps({
               offset,
               startAngle,
-              endAngle,
+              endAngle
             })}
             fill="none"
             className="gauge-progress-background-color"
@@ -110,7 +111,7 @@ const GaugeMinimal = ({
               {...getArcProps({
                 offset,
                 startAngle,
-                endAngle: valueToAngle(value),
+                endAngle: valueToAngle(value)
               })}
               fill="none"
               className={color}
@@ -156,8 +157,11 @@ const GaugeMinimal = ({
                 state={state}
                 digits={digits}
                 units={units}
+                className={className}
                 threshold={threshold}
                 format_with={format_with}
+                set_color_with={set_color_with}
+                set_class_name_with={set_class_name_with}
               />
             </>
           )}

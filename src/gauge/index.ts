@@ -25,7 +25,7 @@ enum GaugeType {
   Sphere = "sphere",
   Minimal = "minimal",
   Light = "light",
-Modern="modern"
+  Modern = "modern"
 }
 
 enum GaugeProgressColor {
@@ -46,8 +46,11 @@ export interface GaugeParams {
   value?: number;
   digits?: number;
   units?: string;
+  className?: string;
   threshold?: Array<ItemValueThreshold>;
   format_with?: (value: any) => any;
+  set_color_with?: (value: any) => string | undefined;
+  set_class_name_with?: (value: any) => string | undefined;
   diameter?: number;
   warnValue?: number;
   critValue?: number;
@@ -67,8 +70,6 @@ export interface GaugeParams {
   showValue?: boolean;
   label?: string;
 }
-
-
 
 export {
   Gauge,

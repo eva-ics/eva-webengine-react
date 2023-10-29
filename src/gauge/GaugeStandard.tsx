@@ -1,8 +1,7 @@
 import React from "react";
 import { GaugeProgressColor, GaugeParams, StrokeLineCap } from "./index";
-import { calculateColor,useGauge } from "./common";
+import { calculateColor, useGauge } from "./common";
 import { ItemValue } from "../value";
-
 
 const options = {
   diameter: 200, // GaugeStandard diameter value
@@ -33,8 +32,11 @@ const GaugeStandard = ({
   engine,
   digits,
   units,
+  className,
   threshold,
   format_with,
+  set_color_with,
+  set_class_name_with,
   showValue,
   label,
   diameter = options.diameter,
@@ -50,7 +52,6 @@ const GaugeStandard = ({
   needleOffset = options.needleOffset,
   middleRadius = options.middleRadius
 }: GaugeParams) => {
-
   let value = state ? state.value : NaN;
   const color = calculateColor(
     value,
@@ -156,8 +157,11 @@ const GaugeStandard = ({
                 state={state}
                 digits={digits}
                 units={units}
+                className={className}
                 threshold={threshold}
                 format_with={format_with}
+                set_color_with={set_color_with}
+                set_class_name_with={set_class_name_with}
               />
             </>
           )}

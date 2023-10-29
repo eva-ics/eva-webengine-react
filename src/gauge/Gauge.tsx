@@ -18,8 +18,11 @@ const Gauge = ({
   engine,
   digits,
   units,
+  className,
   threshold,
   format_with,
+  set_color_with,
+  set_class_name_with,
   diameter,
   warnValue,
   critValue,
@@ -53,8 +56,11 @@ const Gauge = ({
           engine={engine}
           digits={digits}
           units={units}
+          className={className}
           threshold={threshold}
           format_with={format_with}
+          set_color_with={set_color_with}
+          set_class_name_with={set_class_name_with}
           diameter={diameter}
           warnValue={warnValue}
           critValue={critValue}
@@ -85,8 +91,11 @@ const Gauge = ({
           engine={engine}
           digits={digits}
           units={units}
+          className={className}
           threshold={threshold}
           format_with={format_with}
+          set_color_with={set_color_with}
+          set_class_name_with={set_class_name_with}
           diameter={diameter}
           warnValue={warnValue}
           critValue={critValue}
@@ -117,8 +126,11 @@ const Gauge = ({
           engine={engine}
           digits={digits}
           units={units}
+          className={className}
           threshold={threshold}
           format_with={format_with}
+          set_color_with={set_color_with}
+          set_class_name_with={set_class_name_with}
           diameter={diameter}
           warnValue={warnValue}
           critValue={critValue}
@@ -149,8 +161,11 @@ const Gauge = ({
           engine={engine}
           digits={digits}
           units={units}
+          className={className}
           threshold={threshold}
           format_with={format_with}
+          set_color_with={set_color_with}
+          set_class_name_with={set_class_name_with}
           diameter={diameter}
           warnValue={warnValue}
           critValue={critValue}
@@ -176,8 +191,11 @@ const Gauge = ({
           engine={engine}
           digits={digits}
           units={units}
+          className={className}
           threshold={threshold}
           format_with={format_with}
+          set_color_with={set_color_with}
+          set_class_name_with={set_class_name_with}
           diameter={diameter}
           warnValue={warnValue}
           critValue={critValue}

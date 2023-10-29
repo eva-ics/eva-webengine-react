@@ -6,7 +6,10 @@ interface ItemValueDisplay {
   state?: ItemState;
   label?: string;
   units?: string;
+  className?: string;
   format_with?: (value: any) => any;
+  set_color_with?: (value: any) => string | any;
+  set_class_name_with?: (value: any) => string | any;
   digits?: number;
   threshold?: Array<ItemValueThreshold>;
   position?: CanvasPosition;
@@ -52,8 +55,11 @@ const ItemValueTable = ({
                   state={v.state}
                   digits={v.digits}
                   units={v.units}
+                  className={v.className}
                   threshold={v.threshold}
                   format_with={v.format_with}
+                  set_color_with={v.set_color_with}
+                  set_class_name_with={v.set_class_name_with}
                   engine={engine}
                 />
               </td>
@@ -70,24 +76,39 @@ const ItemValue = ({
   state,
   digits,
   units,
+  className,
   threshold,
   format_with,
   set_color_with,
+  set_class_name_with,
   engine
 }: {
   oid?: string;
   state?: ItemState;
   digits?: number;
   units?: string;
+  className?: string;
   threshold?: Array<ItemValueThreshold>;
   format_with?: (value: any) => any;
   set_color_with?: (value: any) => string | undefined;
+  set_class_name_with?: (value: any) => string | undefined;
   engine?: Eva;
 }) => {
   const eva_state = useEvaState({ oid: oid, engine });
   state = state ? state : eva_state;
 
-  let cls = "";
+  let value;
+  if (digits === undefined) {
+    value = state.value;
+  } else {
+    value = parseFloat(state.value).toFixed(digits);
+  }
+  let cls;
+  if (set_class_name_with) {
+    cls = set_class_name_with(value) || "";
+  } else {
+    cls = className || "";
+  }
   switch (state.status) {
     case -1:
       cls += " error";
@@ -97,12 +118,6 @@ const ItemValue = ({
       break;
   }
   if (state.connected == false) cls += " disconnected";
-  let value;
-  if (digits === undefined) {
-    value = state.value;
-  } else {
-    value = parseFloat(state.value).toFixed(digits);
-  }
   if (threshold) {
     let v = parseFloat(state.value);
     for (const t of threshold) {
@@ -120,7 +135,7 @@ const ItemValue = ({
     value = format_with(value);
   }
   return (
-    <span className={`eva state${cls}`} style={{ color: color }}>
+    <span className={`eva state ${cls}`} style={{ color: color }}>
       {value}
       {units}
     </span>
