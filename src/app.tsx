@@ -99,7 +99,7 @@ const HMIApp = ({
       if (login_props?.cache_auth) {
         if (form.remember) {
           if (eva_engine.password) {
-            cookies.create(CookieNames.Password, eva_engine.password);
+            cookies.create(CookieNames.Password, eva_engine.password, 3650);
           }
         } else {
           try {
@@ -372,7 +372,7 @@ const CredsForm = ({
     engine.login = form.login;
     engine.password = form.password;
     if (props?.cache_login || props?.cache_auth) {
-      cookies.create(CookieNames.Login, form.login);
+      cookies.create(CookieNames.Login, form.login, 3650);
     }
     const nextFormState = {
       ...form,
