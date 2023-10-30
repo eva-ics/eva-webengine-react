@@ -66,9 +66,9 @@ const HMIApp = ({
   }) => JSX.Element;
   login_props?: LoginProps;
 }) => {
-  const [app_state, setAppState] = useState({
+  const [app_state, setAppState] = useState<AppState>({
     state: AppStateKind.Loaded
-  } as AppState);
+  });
 
   const eva_engine: Eva = engine || (get_engine() as Eva);
 
@@ -99,7 +99,7 @@ const HMIApp = ({
       if (login_props?.cache_auth) {
         if (form.remember) {
           if (eva_engine.password) {
-            cookies.create(CookieNames.Password, eva_engine.password, 3650);
+            cookies.create(CookieNames.Password, eva_engine.password, 365);
           }
         } else {
           try {
@@ -110,6 +110,8 @@ const HMIApp = ({
       eva_engine.password = "";
       setAppState({ state: AppStateKind.Active });
     });
+  }, [form.remember]);
+  useEffect(() => {
     eva_engine.on(EventKind.LoginOTPSetup, (msg: SvcMessage) => {
       setAppState({ state: AppStateKind.OtpSetup, svc_msg: msg });
       eva_engine.login_xopts = null;
@@ -372,7 +374,7 @@ const CredsForm = ({
     engine.login = form.login;
     engine.password = form.password;
     if (props?.cache_login || props?.cache_auth) {
-      cookies.create(CookieNames.Login, form.login, 3650);
+      cookies.create(CookieNames.Login, form.login, 365);
     }
     const nextFormState = {
       ...form,
