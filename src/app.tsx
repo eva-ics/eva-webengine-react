@@ -13,13 +13,13 @@ import { get_engine } from "./common";
 type FunctionLogout = () => void;
 
 enum AppStateKind {
-  Loaded = 0,
-  Ready = 1,
-  LoggingIn = 2,
-  OtpSetup = 10,
-  OtpAuth = 11,
-  Active = 100,
-  LoginFailed = -1
+  LoginSession = "login_session",
+  LoginAuto = "login_auto",
+  Login = "login",
+  OtpSetup = "otp_setup",
+  OtpAuth = "otp_auth",
+  LoginForm = "login_form",
+  Active = "active"
 }
 
 enum CookieNames {
@@ -67,7 +67,7 @@ const HMIApp = ({
   login_props?: LoginProps;
 }) => {
   const [app_state, setAppState] = useState<AppState>({
-    state: AppStateKind.Loaded
+    state: AppStateKind.LoginSession
   });
 
   const eva_engine: Eva = engine || (get_engine() as Eva);
@@ -89,7 +89,7 @@ const HMIApp = ({
       } catch (e) {}
       await eva_engine.stop();
     } catch (e) {}
-    setAppState({ state: AppStateKind.Ready });
+    setAppState({ state: AppStateKind.LoginForm });
   };
 
   useEffect(() => {
@@ -98,7 +98,7 @@ const HMIApp = ({
       eva_engine.login_xopts = null;
       if (login_props?.cache_auth) {
         if (form.remember) {
-          if (eva_engine.password) {
+          if (eva_engine.password && app_state.state == AppStateKind.Login) {
             cookies.create(CookieNames.Password, eva_engine.password, 365);
           }
         } else {
@@ -110,7 +110,8 @@ const HMIApp = ({
       eva_engine.password = "";
       setAppState({ state: AppStateKind.Active });
     });
-  }, [form.remember]);
+  }, [form.remember, login_props, app_state]);
+
   useEffect(() => {
     eva_engine.on(EventKind.LoginOTPSetup, (msg: SvcMessage) => {
       setAppState({ state: AppStateKind.OtpSetup, svc_msg: msg });
@@ -127,60 +128,65 @@ const HMIApp = ({
       });
       eva_engine.login_xopts = null;
     });
+  }, []);
+
+  useEffect(() => {
     eva_engine.on(EventKind.LoginFailed, (err: EvaError) => {
-      if (login_props?.cache_auth && eva_engine.password) {
+      // delete password cookie if access denied
+      if (
+        err.code == EvaErrorKind.ACCESS_DENIED &&
+        app_state.state == AppStateKind.LoginAuto
+      ) {
         try {
           cookies.erase(CookieNames.Password);
         } catch (e) {}
       }
-      setAppState({ state: AppStateKind.LoginFailed, err: err });
+      setAppState({
+        state:
+          app_state.state == AppStateKind.LoginSession &&
+          err.code == EvaErrorKind.ACCESS_DENIED
+            ? AppStateKind.LoginAuto
+            : AppStateKind.LoginForm,
+        err: err
+      });
     });
-  }, []);
 
-  // try to auto login if there is a token in cookies or basic auth is used
-  if (app_state.state == AppStateKind.Loaded) {
-    setAppState({ state: AppStateKind.LoggingIn });
-    eva_engine.start();
-  }
-
-  let error_msg = app_state.err ? app_state.err.message : "";
-  // auto-login failed - ignore
-  if (app_state?.err?.code == EvaErrorKind.ACCESS_DENIED) {
-    if (
-      error_msg === "No authentication data provided" ||
-      error_msg === "invalid token"
-    ) {
-      error_msg = "";
-      // try to repeat login with cached
-      if (login_props?.cache_auth) {
-        eva_engine.login = cookies.read(CookieNames.Login) || "";
-        eva_engine.password = cookies.read(CookieNames.Password) || "";
-        if (eva_engine.login && eva_engine.password) {
-          //setAppState({ state: AppStateKind.LoggingIn });
-          eva_engine.start();
+    switch (app_state.state) {
+      // try to login with an existing session or basic auth
+      case AppStateKind.LoginSession:
+        eva_engine.start();
+        break;
+      case AppStateKind.LoginAuto:
+        // try to auto login if there is a token in cookies or basic auth is used
+        if (login_props?.cache_auth) {
+          eva_engine.login = cookies.read(CookieNames.Login) || "";
+          eva_engine.password = cookies.read(CookieNames.Password) || "";
         }
-      }
-    } else {
-      try {
-        cookies.erase(CookieNames.Password);
-      } catch (e) {}
+        if (eva_engine.login && eva_engine.password) {
+          eva_engine.start();
+        } else {
+          setAppState({ state: AppStateKind.LoginForm });
+        }
+        break;
     }
-  }
+  }, [app_state, login_props]);
 
   switch (app_state.state) {
-    case AppStateKind.LoggingIn:
+    case AppStateKind.Active:
+      return (
+        <>
+          <Dashboard engine={eva_engine} logout={logout} />
+        </>
+      );
+      break;
+    case AppStateKind.LoginSession:
+    case AppStateKind.LoginAuto:
+    case AppStateKind.Login:
       return (
         <>
           <div className="eva login progress">
             {login_props?.label_logging_in || "Logging in..."}
           </div>
-        </>
-      );
-      break;
-    case AppStateKind.Active:
-      return (
-        <>
-          <Dashboard engine={eva_engine} logout={logout} />
         </>
       );
       break;
@@ -198,7 +204,6 @@ const HMIApp = ({
         </>
       );
       break;
-    case AppStateKind.Loaded:
     default:
       return (
         <>
@@ -208,7 +213,7 @@ const HMIApp = ({
             setForm={setForm}
             setAppState={setAppState}
             props={login_props}
-            error_msg={error_msg}
+            error_msg={app_state.err?.message}
           />
         </>
       );
@@ -243,7 +248,7 @@ const OtpForm = ({
 
   const onSubmit = (e: any) => {
     e.preventDefault();
-    setAppState({ state: AppStateKind.LoggingIn });
+    setAppState({ state: AppStateKind.Login });
     engine.login_xopts = { otp: otp_form.otp };
     const nextFormState = {
       ...otp_form,
@@ -363,14 +368,14 @@ const CredsForm = ({
     const nextFormState = {
       ...form,
       [e.target.name]:
-        e.target.name === "remember" ? e.target.checked : e.target.value
+        e.target.name == "remember" ? e.target.checked : e.target.value
     };
     setForm(nextFormState);
   };
 
   const onSubmit = (e: any) => {
     e.preventDefault();
-    setAppState({ state: AppStateKind.LoggingIn });
+    setAppState({ state: AppStateKind.Login });
     engine.login = form.login;
     engine.password = form.password;
     if (props?.cache_login || props?.cache_auth) {
