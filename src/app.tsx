@@ -5,7 +5,15 @@ import {
   EventKind,
   SvcMessage
 } from "@eva-ics/webengine";
-import { useState, useEffect, useRef } from "react";
+import {
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+  useMemo,
+  Dispatch,
+  SetStateAction
+} from "react";
 import { cookies } from "@altertech/jsaltt";
 import { QRious } from "react-qrious";
 import { get_engine } from "./common";
@@ -49,6 +57,13 @@ interface LoginProps {
   otp_qr_size?: number;
   cache_login?: boolean;
   cache_auth?: boolean;
+  register_globals?: boolean;
+}
+
+interface FormData {
+  login: string;
+  password: string;
+  remember: boolean;
 }
 
 const HMIApp = ({
@@ -70,19 +85,21 @@ const HMIApp = ({
     state: AppStateKind.LoginSession
   });
 
-  const eva_engine: Eva = engine || (get_engine() as Eva);
+  const eva_engine: Eva = useMemo(() => {
+    const eva_engine = engine || (get_engine() as Eva);
+    if (!eva_engine) {
+      throw new Error("EVA ICS WebEngine not set");
+    }
+    return eva_engine;
+  }, [engine]);
 
-  if (!eva_engine) {
-    throw new Error("EVA ICS WebEngine not set");
-  }
-
-  const [form, setForm] = useState({
+  const [form, setForm] = useState<FormData>({
     login: "",
     password: "",
     remember: true
   });
 
-  const logout = async () => {
+  const logout = useCallback(async () => {
     try {
       try {
         cookies.erase(CookieNames.Password);
@@ -90,7 +107,26 @@ const HMIApp = ({
       await eva_engine.stop();
     } catch (e) {}
     setAppState({ state: AppStateKind.LoginForm });
-  };
+  }, [eva_engine]);
+
+  useEffect(() => {
+    if (login_props?.register_globals) {
+      eva_engine.register_globals();
+      const w = window as any;
+      if (w.$eva.hmi == undefined) {
+        w.$eva.hmi = {};
+      }
+      const hmi = w.$eva.hmi;
+      hmi.logout = logout;
+      hmi.login = (login: string, password: string) => {
+        setAppState({ state: AppStateKind.Login });
+        eva_engine.login = login;
+        eva_engine.password = password;
+        setForm({ login: "", password: "", remember: false });
+        eva_engine.start();
+      };
+    }
+  }, [login_props, logout, eva_engine]);
 
   useEffect(() => {
     eva_engine.on(EventKind.LoginSuccess, () => {
@@ -110,7 +146,7 @@ const HMIApp = ({
       eva_engine.password = "";
       setAppState({ state: AppStateKind.Active });
     });
-  }, [form.remember, login_props, app_state]);
+  }, [form.remember, login_props, app_state, eva_engine]);
 
   useEffect(() => {
     eva_engine.on(EventKind.LoginOTPSetup, (msg: SvcMessage) => {
@@ -128,7 +164,7 @@ const HMIApp = ({
       });
       eva_engine.login_xopts = null;
     });
-  }, []);
+  }, [eva_engine]);
 
   useEffect(() => {
     eva_engine.on(EventKind.LoginFailed, (err: EvaError) => {
@@ -169,7 +205,7 @@ const HMIApp = ({
         }
         break;
     }
-  }, [app_state, login_props]);
+  }, [app_state, login_props, eva_engine]);
 
   switch (app_state.state) {
     case AppStateKind.Active:
@@ -205,6 +241,12 @@ const HMIApp = ({
       );
       break;
     default:
+      let error_msg = app_state.err?.message;
+      // for strict mode in development
+      if (error_msg == "No authentication data provided") {
+        eva_engine.log.debug("suppressing error message, strict mode & development on?");
+        error_msg = undefined;
+      }
       return (
         <>
           <CredsForm
@@ -213,7 +255,7 @@ const HMIApp = ({
             setForm={setForm}
             setAppState={setAppState}
             props={login_props}
-            error_msg={app_state.err?.message}
+            error_msg={error_msg}
           />
         </>
       );
@@ -229,7 +271,7 @@ const OtpForm = ({
 }: {
   engine: Eva;
   app_state: AppState;
-  setAppState: any;
+  setAppState: Dispatch<SetStateAction<AppState>>;
   props?: LoginProps;
   logout: FunctionLogout;
 }) => {
@@ -266,6 +308,7 @@ const OtpForm = ({
   useEffect(() => {
     (otpRef.current as any).focus();
   }, []);
+
   let form_data;
   switch (app_state.state) {
     case AppStateKind.OtpSetup:
@@ -342,9 +385,9 @@ const CredsForm = ({
   props
 }: {
   engine: Eva;
-  form: any;
-  setForm: any;
-  setAppState: any;
+  form: FormData;
+  setForm: Dispatch<SetStateAction<FormData>>;
+  setAppState: Dispatch<SetStateAction<AppState>>;
   error_msg?: string;
   props?: LoginProps;
 }) => {
@@ -362,32 +405,38 @@ const CredsForm = ({
         setForm(nextFormState);
       }
     }
-  }, []);
+  }, [props, setForm]);
 
-  const onUpdateField = (e: any) => {
-    const nextFormState = {
-      ...form,
-      [e.target.name]:
-        e.target.name == "remember" ? e.target.checked : e.target.value
-    };
-    setForm(nextFormState);
-  };
+  const onUpdateField = useCallback(
+    (e: any) => {
+      const nextFormState = {
+        ...form,
+        [e.target.name]:
+          e.target.name == "remember" ? e.target.checked : e.target.value
+      };
+      setForm(nextFormState);
+    },
+    [form]
+  );
 
-  const onSubmit = (e: any) => {
-    e.preventDefault();
-    setAppState({ state: AppStateKind.Login });
-    engine.login = form.login;
-    engine.password = form.password;
-    if (props?.cache_login || props?.cache_auth) {
-      cookies.create(CookieNames.Login, form.login, 365);
-    }
-    const nextFormState = {
-      ...form,
-      password: ""
-    };
-    setForm(nextFormState);
-    engine.start();
-  };
+  const onSubmit = useCallback(
+    (e: any) => {
+      e.preventDefault();
+      setAppState({ state: AppStateKind.Login });
+      engine.login = form.login;
+      engine.password = form.password;
+      if (props?.cache_login || props?.cache_auth) {
+        cookies.create(CookieNames.Login, form.login, 365);
+      }
+      const nextFormState = {
+        ...form,
+        password: ""
+      };
+      setForm(nextFormState);
+      engine.start();
+    },
+    [engine, props, form]
+  );
 
   let remember;
   if (props?.cache_auth) {

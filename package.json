@@ -41,7 +41,7 @@
   "homepage": "https://www.eva-ics.com/",
   "peerDependencies": {
     "@altertech/jsaltt": "^0.1.15",
-    "@eva-ics/webengine": "^0.5.20",
+    "@eva-ics/webengine": "^0.5.21",
     "chart.js": "^4.1.1",
     "react": "^18.2.0",
     "react-chartjs-2": "^5.2.0",
@@ -50,7 +50,7 @@
   },
   "devDependencies": {
     "@altertech/jsaltt": "^0.1.15",
-    "@eva-ics/webengine": "^0.5.20",
+    "@eva-ics/webengine": "^0.5.21",
     "@types/react": "^18.0.37",
     "@types/react-dom": "^18.0.11",
     "@vitejs/plugin-react": "^4.0.0",
