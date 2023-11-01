@@ -120,10 +120,12 @@ const HMIApp = ({
       hmi.logout = logout;
       hmi.login = (login: string, password: string) => {
         setAppState({ state: AppStateKind.Login });
-        eva_engine.login = login;
-        eva_engine.password = password;
-        setForm({ login: "", password: "", remember: false });
-        eva_engine.start();
+        eva_engine.stop().finally(() => {
+          eva_engine.login = login;
+          eva_engine.password = password;
+          setForm({ login: "", password: "", remember: false });
+          eva_engine.start();
+        });
       };
     }
   }, [login_props, logout, eva_engine]);
@@ -244,7 +246,9 @@ const HMIApp = ({
       let error_msg = app_state.err?.message;
       // for strict mode in development
       if (error_msg == "No authentication data provided") {
-        eva_engine.log.debug("suppressing error message, strict mode & development on?");
+        eva_engine.log.debug(
+          "suppressing error message, strict mode & development on?"
+        );
         error_msg = undefined;
       }
       return (
