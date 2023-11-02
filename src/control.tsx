@@ -1,6 +1,13 @@
 import { Eva, ActionResult, EvaError, EvaErrorKind } from "@eva-ics/webengine";
 import { CanvasPosition, get_engine, useEvaState } from "./common";
-import { useId, useRef, useState, ChangeEvent, MouseEvent } from "react";
+import {
+  useId,
+  useRef,
+  useState,
+  ChangeEvent,
+  MouseEvent,
+  KeyboardEvent
+} from "react";
 
 const handle_action_finished = (
   result: ActionResult,
@@ -186,7 +193,7 @@ const ControlButtonValue = ({
   const id = useId();
   const valueRef = useRef(null);
 
-  const handle_action = (e: MouseEvent) => {
+  const handle_action = (e: MouseEvent | KeyboardEvent) => {
     e.preventDefault();
     if (disabled_actions) {
       return;
@@ -210,7 +217,8 @@ const ControlButtonValue = ({
   };
 
   if (value === undefined && valueRef.current) {
-    (valueRef.current as any).value = state.value;
+    (valueRef.current as any).value =
+      state.value === undefined ? "" : state.value;
   }
 
   let input_cls = `eva button value ${css_class || ""}`;
@@ -223,14 +231,22 @@ const ControlButtonValue = ({
     <div className={`eva button container value ${css_class || ""}`}>
       <input
         className={input_cls}
-        size={input_size}
+        size={input_size || 5}
         onChange={(e) => setValue(e.target.value)}
         onKeyDown={(e) => {
-          if (e.keyCode === 27) setValue(undefined);
+          switch (e.code) {
+            case "Escape":
+              setValue(undefined);
+              break;
+            case "Enter":
+              handle_action(e);
+              break;
+          }
         }}
         type="text"
         ref={valueRef}
         id={id}
+        disabled={disabled_actions}
       />
       <label htmlFor={id}>
         <div className={`eva button input label ${css_class || ""}`}>
@@ -239,8 +255,9 @@ const ControlButtonValue = ({
       </label>
       <button
         disabled={
-          value === undefined ||
-          (state && state.act !== undefined && state.act > 0)
+          (value === undefined ||
+            (state && state.act !== undefined && state.act > 0)) &&
+          !disabled_actions
         }
         onClick={handle_action}
         className={`eva button input apply ${css_class || ""}`}
