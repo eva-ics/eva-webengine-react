@@ -105,6 +105,9 @@ const HMIApp = ({
         cookies.erase(CookieNames.Password);
       } catch (e) {}
       await eva_engine.stop();
+      eva_engine.login = "";
+      eva_engine.password = "";
+      eva_engine.apikey = "";
     } catch (e) {}
     setAppState({ state: AppStateKind.LoginForm });
   }, [eva_engine]);
@@ -123,6 +126,7 @@ const HMIApp = ({
         eva_engine.stop().finally(() => {
           eva_engine.login = login;
           eva_engine.password = password;
+          eva_engine.apikey = "";
           setForm({ login: "", password: "", remember: false });
           eva_engine.start();
         });
