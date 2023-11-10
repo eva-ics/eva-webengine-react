@@ -14,7 +14,7 @@ import {
   Dispatch,
   SetStateAction
 } from "react";
-import { cookies } from "@altertech/jsaltt";
+import { cookies } from "bmat/dom";
 import { QRious } from "react-qrious";
 import { get_engine } from "./common";
 

@@ -1,7 +1,7 @@
 import { useEvaStateHistory } from "./common";
 import { Line } from "react-chartjs-2";
 import { Eva, StateProp } from "@eva-ics/webengine";
-import { deepMerge } from "@altertech/jsaltt";
+import { deepMerge } from "bmat/tools";
 
 const LineChart = ({
   oid,

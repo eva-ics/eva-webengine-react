@@ -12,7 +12,10 @@ export default defineConfig({
         "react",
         "react-dom",
         "react-qrious",
-        "react-chartjs-2"
+        "react-chartjs-2",
+        "bmat",
+        "bmat/dom",
+        "bmat/tools"
       ]
     },
     lib: {
