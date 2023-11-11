@@ -68,10 +68,15 @@ interface EvaStateHistoryParams {
   engine?: Eva;
 }
 
+interface UpdateWorkerEnabled {
+  enabled: boolean;
+}
+
 const useEvaStateHistory = (params: EvaStateHistoryParams) => {
   const [state, setState] = useState({ data: null } as StateHistoryData);
   const visible = useRef(false);
-  const update_worker: any = useRef(null);
+  const update_worker = useRef<any>(null);
+  const update_worker_enabled = useRef<UpdateWorkerEnabled>({ enabled: true });
 
   const eva_engine: Eva = params.engine || (eva as Eva);
   let update_interval = params.update ? params.update * 1000 : 1000;
@@ -84,9 +89,13 @@ const useEvaStateHistory = (params: EvaStateHistoryParams) => {
   const updateHistory = useCallback(() => {
     if (!visible.current) {
       update_worker.current = null;
+      update_worker_enabled.current.enabled = false;
+      update_worker_enabled.current = { enabled: false };
       setState({ data: null });
       return;
     }
+    update_worker_enabled.current = { enabled: true };
+    const uw_enabled = update_worker_enabled.current;
     if (eva_engine && eva_engine.logged_in) {
       let tframes = params.timeframe || "1H";
       if (!Array.isArray(tframes)) {
@@ -126,10 +135,14 @@ const useEvaStateHistory = (params: EvaStateHistoryParams) => {
       Promise.all(calls)
         .then((result) => {
           (result as any).t = result[primary_tf_idx].t;
-          setState({ data: result });
+          if (uw_enabled.enabled) {
+            setState({ data: result });
+          }
         })
         .catch((err: EvaError) => {
-          setState({ data: null, error: err });
+          if (uw_enabled.enabled) {
+            setState({ data: null, error: err });
+          }
         });
     } else {
       setState({ data: null });
@@ -168,6 +181,8 @@ const useEvaStateHistory = (params: EvaStateHistoryParams) => {
       clearTimeout(update_worker.current);
       setState({ data: null });
       update_worker.current = null;
+      update_worker_enabled.current.enabled = false;
+      update_worker_enabled.current = { enabled: false };
     };
   }, [
     params.oid,
@@ -197,6 +212,7 @@ const useEvaAPICall = (params: EvaAPICallParams) => {
   const [state, setState] = useState<APICallData>({ data: null });
   const visible = useRef(false);
   const update_worker: any = useRef(null);
+  const update_worker_enabled = useRef<UpdateWorkerEnabled>({ enabled: true });
 
   const eva_engine: Eva = params.engine || (eva as Eva);
   let update_interval = params.update ? params.update * 1000 : 1000;
@@ -209,17 +225,25 @@ const useEvaAPICall = (params: EvaAPICallParams) => {
   const updateData = useCallback(() => {
     if (!visible.current) {
       update_worker.current = null;
+      update_worker_enabled.current.enabled = false;
+      update_worker_enabled.current = { enabled: false };
       setState({ data: null });
       return;
     }
+    update_worker_enabled.current = { enabled: true };
+    const uw_enabled = update_worker_enabled.current;
     if (eva_engine && eva_engine.logged_in && params.method) {
       eva_engine!
         .call(params.method, params.params)
         .then((result: any) => {
-          setState({ data: result });
+          if (uw_enabled.enabled) {
+            setState({ data: result });
+          }
         })
         .catch((err: EvaError) => {
-          setState({ data: null, error: err });
+          if (uw_enabled.enabled) {
+            setState({ data: null, error: err });
+          }
         });
     } else {
       setState({ data: null });
@@ -251,6 +275,8 @@ const useEvaAPICall = (params: EvaAPICallParams) => {
       clearTimeout(update_worker.current);
       setState({ data: null });
       update_worker.current = null;
+      update_worker_enabled.current.enabled = false;
+      update_worker_enabled.current = { enabled: false };
     };
   }, [params.method, params.params, updateData]);
   return state;
