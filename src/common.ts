@@ -84,6 +84,7 @@ const useEvaStateHistory = (params: EvaStateHistoryParams) => {
   const updateHistory = useCallback(() => {
     if (!visible.current) {
       update_worker.current = null;
+      setState({ data: null });
       return;
     }
     if (eva_engine && eva_engine.logged_in) {
@@ -165,6 +166,7 @@ const useEvaStateHistory = (params: EvaStateHistoryParams) => {
     return () => {
       visible.current = false;
       clearTimeout(update_worker.current);
+      setState({ data: null });
       update_worker.current = null;
     };
   }, [
@@ -207,6 +209,7 @@ const useEvaAPICall = (params: EvaAPICallParams) => {
   const updateData = useCallback(() => {
     if (!visible.current) {
       update_worker.current = null;
+      setState({ data: null });
       return;
     }
     if (eva_engine && eva_engine.logged_in && params.method) {
@@ -246,6 +249,7 @@ const useEvaAPICall = (params: EvaAPICallParams) => {
     return () => {
       visible.current = false;
       clearTimeout(update_worker.current);
+      setState({ data: null });
       update_worker.current = null;
     };
   }, [params.method, params.params, updateData]);
