@@ -14,6 +14,9 @@ const LineChart = ({
   labels,
   title,
   options,
+  className,
+  width,
+  height,
   engine
 }: {
   oid: string | Array<string>;
@@ -26,6 +29,9 @@ const LineChart = ({
   labels?: Array<string>;
   title?: string;
   options?: any;
+  className?: string;
+  width?: number;
+  height?: number;
   engine?: Eva;
 }) => {
   const state = useEvaStateHistory({
@@ -37,6 +43,8 @@ const LineChart = ({
     args: args,
     engine: engine
   });
+
+  const chart_style = { width: width, height: height };
 
   if (state.data) {
     try {
@@ -84,14 +92,26 @@ const LineChart = ({
           xidx += 1;
         }
       }
-      let t_unit;
-      if (Array.isArray(timeframe)) {
-        t_unit = timeframe[0].slice(-1);
-      } else {
-        t_unit = timeframe.slice(-1);
-      }
       let ct_unit;
       let ct_format;
+      let t_unit = Array.isArray(timeframe) ? timeframe[0] : timeframe;
+      if (t_unit.includes(":")) {
+        let [t_start_s, t_end_s] = t_unit.split(":");
+        const t_start = parseFloat(t_start_s);
+        const t_end = parseFloat(t_end_s);
+        if (t_start && t_end) {
+          const t_range = t_end - t_start;
+          if (t_range < 3600 * 2) {
+            t_unit = "T";
+          } else if (t_range < 86400 * 2) {
+            t_unit = "H";
+          } else {
+            t_unit = "D";
+          }
+        }
+      } else {
+        t_unit = t_unit.slice(-1);
+      }
       switch (t_unit) {
         case "T":
         case "S":
@@ -171,19 +191,32 @@ const LineChart = ({
       };
       let chart_ops = deepMerge(default_chart_ops, options);
       return (
-        <div className="eva chart container">
+        <div style={chart_style} className={`eva chart container ${className}`}>
           <Line datasetIdKey="id" data={data} options={chart_ops} />
         </div>
       );
     } catch (error) {
       const err = `Error: ${error})`;
-      return <div className="eva chart error">{err}</div>;
+      return (
+        <div style={chart_style} className={`eva chart error ${className}`}>
+          {err}
+        </div>
+      );
     }
   } else if (state.error) {
     const err = `Error: ${state.error.message} (${state.error.code})`;
-    return <div className="eva chart error">{err}</div>;
+    return (
+      <div style={chart_style} className={`eva chart error ${className}`}>
+        {err}
+      </div>
+    );
   } else {
-    return <div className="eva chart loading"></div>;
+    return (
+      <div
+        style={chart_style}
+        className={`eva chart loading ${className}`}
+      ></div>
+    );
   }
 };
 
