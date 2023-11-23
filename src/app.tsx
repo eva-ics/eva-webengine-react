@@ -17,6 +17,7 @@ import {
 import { cookies } from "bmat/dom";
 import { QRious } from "react-qrious";
 import { get_engine } from "./common";
+import toast from "react-hot-toast";
 
 type FunctionLogout = () => void;
 
@@ -65,6 +66,20 @@ interface FormData {
   password: string;
   remember: boolean;
 }
+
+const displayAlert = (text: string, level: string, timeout?: number) => {
+  let fn;
+  if (level === "warning" || level === "error") {
+    fn = toast.error;
+  } else {
+    fn = toast.success;
+  }
+  let t = timeout;
+  if (t === undefined) {
+    t = 5;
+  }
+  fn(text, { duration: t * 1000 });
+};
 
 const HMIApp = ({
   engine,
@@ -131,6 +146,7 @@ const HMIApp = ({
           eva_engine.start();
         });
       };
+      hmi.display_alert = displayAlert;
     }
   }, [login_props, logout, eva_engine]);
 

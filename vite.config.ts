@@ -11,6 +11,7 @@ export default defineConfig({
         "@eva-ics/webengine",
         "react",
         "react-dom",
+        "react-hot-toast",
         "react-qrious",
         "react-chartjs-2",
         "bmat",
