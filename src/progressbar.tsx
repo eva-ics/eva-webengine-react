@@ -56,7 +56,12 @@ export const ProgressBar = ({
     lowCritValue
   );
 
-  const percentage = ((value - minValue) / (maxValue - minValue)) * 100;
+  let percentage = ((value - minValue) / (maxValue - minValue)) * 100;
+  if (percentage < 0) {
+    percentage = 0;
+  } else if (percentage > 100) {
+    percentage = 100;
+  }
 
   return (
     <>

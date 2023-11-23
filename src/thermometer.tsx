@@ -46,7 +46,6 @@ export const Thermometer = ({
 }: ThermometerParams) => {
   const state = useEvaState({ oid, engine });
   const { value } = state;
-  const percentage = ((value - minValue) / (maxValue - minValue)) * 100;
 
   const color = calculateProgressColor(
     "eva-thermometer",
@@ -56,6 +55,13 @@ export const Thermometer = ({
     lowWarnValue,
     lowCritValue
   );
+
+  let percentage = ((value - minValue) / (maxValue - minValue)) * 100;
+  if (percentage < 0) {
+    percentage = 0;
+  } else if (percentage > 100) {
+    percentage = 100;
+  }
 
   return (
     <div className="eva-thermometer-container">
