@@ -36,3 +36,4 @@ export {
   GaugeProgressColor as GaugeClassNameColors,
   Gauge
 } from "./gauge";
+export { Thermometer } from "./thermometer";

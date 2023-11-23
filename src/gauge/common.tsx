@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from "react";
-import {GaugeProgressColor} from "./index";
+import { calculateProgressColor } from "../common";
 
 //Types
 
@@ -278,28 +278,19 @@ export const useGauge = (params: UseGaugeParams) => {
   };
 };
 
-
 export const calculateColor = (
-    value?: number,
-    warnValue?: number,
-    critValue?: number,
-    lowWarnValue?: number,
-    lowCritValue?: number
+  value?: number,
+  warnValue?: number,
+  critValue?: number,
+  lowWarnValue?: number,
+  lowCritValue?: number
 ) => {
-  if (value === undefined || isNaN(value)) {
-    return GaugeProgressColor.Normal;
-  }
-  if (lowCritValue !== undefined && value <= lowCritValue) {
-    return GaugeProgressColor.Critical;
-  }
-  if (lowWarnValue !== undefined && value <= lowWarnValue) {
-    return GaugeProgressColor.Warning;
-  }
-  if (critValue !== undefined && value >= critValue) {
-    return GaugeProgressColor.Critical;
-  }
-  if (warnValue !== undefined && value >= warnValue) {
-    return GaugeProgressColor.Warning;
-  }
-  return GaugeProgressColor.Normal;
+  return calculateProgressColor(
+    "gauge",
+    value,
+    warnValue,
+    critValue,
+    lowWarnValue,
+    lowCritValue
+  );
 };

@@ -360,6 +360,36 @@ const useEvaStateUpdates = (
   return state;
 };
 
+const COLOR_NORMAL = "progress-color";
+const COLOR_WARNING = "warning-progress-color";
+const COLOR_CRITICAL = "critical-progress-color";
+
+const calculateProgressColor = (
+  kind: string,
+  value?: number,
+  warnValue?: number,
+  critValue?: number,
+  lowWarnValue?: number,
+  lowCritValue?: number
+) => {
+  if (value === undefined || isNaN(value)) {
+    return `${kind}-${COLOR_NORMAL}`;
+  }
+  if (lowCritValue !== undefined && value <= lowCritValue) {
+    return `${kind}-${COLOR_CRITICAL}`;
+  }
+  if (lowWarnValue !== undefined && value <= lowWarnValue) {
+    return `${kind}-${COLOR_WARNING}`;
+  }
+  if (critValue !== undefined && value >= critValue) {
+    return `${kind}-${COLOR_CRITICAL}`;
+  }
+  if (warnValue !== undefined && value >= warnValue) {
+    return `${kind}-${COLOR_WARNING}`;
+  }
+  return `${kind}-${COLOR_NORMAL}`;
+};
+
 export {
   get_engine,
   set_engine,
@@ -374,5 +404,6 @@ export {
   APICallData,
   EvaSubscriptionState,
   EvaStateUpdatesParams,
-  useEvaStateUpdates
+  useEvaStateUpdates,
+  calculateProgressColor
 };
