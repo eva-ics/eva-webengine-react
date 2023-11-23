@@ -3,39 +3,43 @@ import { Eva } from "@eva-ics/webengine";
 import { ItemValueThreshold, ItemValue } from "./value";
 
 export interface ThermometerParams {
-  oid: string;
+  oid?: string;
   minValue: number;
   maxValue: number;
   engine?: Eva;
   value?: number;
   digits?: number;
   units?: string;
+  className?: string;
   threshold?: Array<ItemValueThreshold>;
   format_with?: (value: any) => any;
   warnValue?: number;
   critValue?: number;
   lowWarnValue?: number;
   lowCritValue?: number;
+  set_color_with?: (value: any) => string | undefined;
+  set_class_name_with?: (value: any) => string | undefined;
   showValue?: boolean;
   label?: string;
   showMinMax?: boolean;
 }
 
-export { Thermometer };
-
-const Thermometer = ({
+export const Thermometer = ({
   oid,
   minValue,
   maxValue,
   engine,
   digits,
   units,
+  className,
   threshold,
   format_with,
   warnValue,
   critValue,
   lowWarnValue,
   lowCritValue,
+  set_color_with,
+  set_class_name_with,
   showValue,
   label,
   showMinMax
@@ -87,15 +91,17 @@ const Thermometer = ({
           <ItemValue
             engine={engine}
             oid={oid}
+            state={state}
             digits={digits}
             units={units}
+            className={className}
             threshold={threshold}
             format_with={format_with}
+            set_color_with={set_color_with}
+            set_class_name_with={set_class_name_with}
           />
         )}
       </div>
     </div>
   );
 };
-
-export default Thermometer;

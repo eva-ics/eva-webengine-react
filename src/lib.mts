@@ -37,3 +37,4 @@ export {
   Gauge
 } from "./gauge";
 export { Thermometer } from "./thermometer";
+export { ProgressBar } from "./progressbar";
