@@ -137,17 +137,19 @@ const useEvaStateHistory = (params: EvaStateHistoryParams) => {
           (result as any).t = result[primary_tf_idx].t;
           if (uw_enabled.enabled) {
             setState({ data: result });
+            update_worker.current = setTimeout(updateHistory, update_interval);
           }
         })
         .catch((err: EvaError) => {
           if (uw_enabled.enabled) {
             setState({ data: null, error: err });
+            update_worker.current = setTimeout(updateHistory, update_interval);
           }
         });
     } else {
       setState({ data: null });
+      update_worker.current = setTimeout(updateHistory, update_interval);
     }
-    update_worker.current = setTimeout(updateHistory, update_interval);
   }, [
     params.oid,
     params.timeframe,
@@ -238,17 +240,19 @@ const useEvaAPICall = (params: EvaAPICallParams) => {
         .then((result: any) => {
           if (uw_enabled.enabled) {
             setState({ data: result });
+            update_worker.current = setTimeout(updateData, update_interval);
           }
         })
         .catch((err: EvaError) => {
           if (uw_enabled.enabled) {
             setState({ data: null, error: err });
+            update_worker.current = setTimeout(updateData, update_interval);
           }
         });
     } else {
       setState({ data: null });
+      update_worker.current = setTimeout(updateData, update_interval);
     }
-    update_worker.current = setTimeout(updateData, update_interval);
   }, [params.method, params.params, update_interval]);
 
   useEffect(() => {
