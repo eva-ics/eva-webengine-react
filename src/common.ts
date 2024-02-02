@@ -263,11 +263,7 @@ const useEvaAPICall = (params: EvaAPICallParams) => {
           updateData();
         } else {
           setState({
-            data: null,
-            error: new EvaError(
-              EvaErrorKind.INVALID_PARAMS,
-              "method not specified"
-            )
+            data: null
           });
         }
       } else {
