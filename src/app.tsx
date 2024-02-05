@@ -15,7 +15,7 @@ import {
   SetStateAction
 } from "react";
 import { cookies } from "bmat/dom";
-import { QRious } from "react-qrious";
+import QRCode from "react-qr-code";
 import { get_engine } from "./common";
 import toast from "react-hot-toast";
 
@@ -350,7 +350,9 @@ const OtpForm = ({
               "scan this code with an authenticator app then enter the response"}
           </div>
           <div className="eva login qr">
-            <QRious size={props?.otp_qr_size || 150} value={otp_setup} />
+            <div style={{ background: "white", padding: "10px" }}>
+              <QRCode size={(props?.otp_qr_size || 170) - 20} value={otp_setup} />
+            </div>
           </div>
         </>
       );

@@ -12,7 +12,7 @@ export default defineConfig({
         "react",
         "react-dom",
         "react-hot-toast",
-        "react-qrious",
+        "react-qr-code",
         "react-chartjs-2",
         "bmat",
         "bmat/dom",
