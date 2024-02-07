@@ -12,6 +12,14 @@ export interface StateHistoryOIDColMapping {
   prop?: StateProp;
 }
 
+/**
+ * Generate CSV from useStateHistory hook data
+ *
+ * @param {any} data - hookResult.data
+ * @param {StateHistoryOIDColMapping} mapping - OID + prop to col mapping
+ * @param {(t: number) => string} [timeFormatter] - a custom time formatting function
+ * @param {string} [timeColName] - time column name (used in custom formatting only)
+ */
 export const generateStateHistoryCSV = ({
   data,
   mapping,

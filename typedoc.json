@@ -1,0 +1,8 @@
+{
+    "$schema": "https://typedoc.org/schema.json",
+    "name": "EVA ICS WebEngine React",
+    "entryPoints": ["./src/*.ts", "./src/*.tsx"],
+    "navigationLinks": {
+        "GitHub": "https://github.com/eva-ics/eva-webengine-react"
+    }
+}
