@@ -1,6 +1,6 @@
 {
   "name": "@eva-ics/webengine-react",
-  "version": "0.2.10",
+  "version": "0.2.11",
   "type": "module",
   "description": "React components for EVA ICS HMI Web Engine",
   "scripts": {
@@ -42,7 +42,7 @@
   "peerDependencies": {
     "@eva-ics/webengine": "^0.6.1",
     "async-mutex": "^0.4.0",
-    "bmat": "^0.1.4",
+    "bmat": "^0.1.14",
     "chart.js": "^4.1.1",
     "react": "^18.2.0",
     "react-chartjs-2": "^5.2.0",

@@ -16,7 +16,8 @@ export default defineConfig({
         "react-chartjs-2",
         "bmat",
         "bmat/dom",
-        "bmat/tools"
+        "bmat/tools",
+        "bmat/dashtable"
       ]
     },
     lib: {
