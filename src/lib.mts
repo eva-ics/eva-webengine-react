@@ -39,3 +39,5 @@ export {
 export { Thermometer } from "./thermometer";
 export { ProgressBar } from "./progressbar";
 export { EvaErrorMessage } from "./error";
+export type { StateHistoryOIDColMapping } from "./tools";
+export { generateStateHistoryCSV } from "./tools";
