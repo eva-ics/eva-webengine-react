@@ -2,10 +2,12 @@ import { useEvaStateHistory } from "./common";
 import { Line } from "react-chartjs-2";
 import { Eva, StateProp } from "@eva-ics/webengine";
 import { deepMerge } from "bmat/tools";
+import { calculateFormula } from "bmat/numbers";
 
 const LineChart = ({
   oid,
   timeframe,
+  formula,
   update,
   prop,
   fill,
@@ -21,6 +23,7 @@ const LineChart = ({
 }: {
   oid: string | Array<string>;
   timeframe: string | Array<string>;
+  formula?: string | Array<string>;
   update: number;
   prop?: StateProp;
   fill?: string;
@@ -65,6 +68,14 @@ const LineChart = ({
           if (colors) {
             color = colors[xidx];
           }
+          let frm: string | undefined;
+          if (formula) {
+            if (typeof formula === "string") {
+              frm = formula;
+            } else {
+              frm = formula[xidx];
+            }
+          }
           let label;
           if (labels) {
             label = labels[xidx];
@@ -82,8 +93,20 @@ const LineChart = ({
           } else {
             key = x;
           }
+          let dataframe;
+          if (frm) {
+            dataframe = state.data[d][key].map((n: number) => {
+              try {
+                return calculateFormula(frm as string, n);
+              } catch {
+                return NaN;
+              }
+            });
+          } else {
+            dataframe = state.data[d][key];
+          }
           (data.datasets as any).push({
-            data: state.data[d][key],
+            data: dataframe,
             label: label,
             borderColor: color,
             backgroundColor: color,
