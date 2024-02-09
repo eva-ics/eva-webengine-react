@@ -24,6 +24,7 @@ const GaugeModern = ({
   minValue,
   maxValue,
   oid,
+  formula,
   state,
   warnValue,
   critValue,
@@ -125,6 +126,7 @@ const GaugeModern = ({
               <ItemValue
                 engine={engine}
                 oid={oid}
+                formula={formula}
                 digits={digits}
                 units={units}
                 className={className}

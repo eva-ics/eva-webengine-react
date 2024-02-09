@@ -40,6 +40,7 @@ export interface GaugeParams {
   minValue: number;
   maxValue: number;
   oid?: string;
+  formula?: string;
   state?: ItemState;
   type?: GaugeType;
   engine?: Eva;

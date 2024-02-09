@@ -1,8 +1,11 @@
 import { Eva, ItemState } from "@eva-ics/webengine";
 import { useEvaState, CanvasPosition } from "./common";
+import { calculateFormula } from "bmat/numbers";
+import { useMemo } from "react";
 
 interface ItemValueDisplay {
   oid?: string;
+  formula?: string;
   state?: ItemState;
   label?: string;
   units?: string;
@@ -52,6 +55,7 @@ const ItemValueTable = ({
               <td className="eva state valuetable value">
                 <ItemValue
                   oid={v.oid}
+                  formula={v.formula}
                   state={v.state}
                   digits={v.digits}
                   units={v.units}
@@ -73,6 +77,7 @@ const ItemValueTable = ({
 
 const ItemValue = ({
   oid,
+  formula,
   state,
   digits,
   units,
@@ -84,6 +89,7 @@ const ItemValue = ({
   engine
 }: {
   oid?: string;
+  formula?: string;
   state?: ItemState;
   digits?: number;
   units?: string;
@@ -95,14 +101,25 @@ const ItemValue = ({
   engine?: Eva;
 }) => {
   const eva_state = useEvaState({ oid: oid, engine });
-  state = state ? state : eva_state;
 
-  let value;
-  if (digits === undefined) {
-    value = state.value;
-  } else {
+  state = useMemo(() => {
+    return state ? state : eva_state;
+  }, [state, eva_state]);
+
+  let value = state.value;
+
+  if (formula && typeof value === "number") {
+    try {
+      value = calculateFormula(formula, value);
+    } catch {
+      value = NaN;
+    }
+  }
+
+  if (digits !== undefined) {
     value = parseFloat(state.value).toFixed(digits);
   }
+
   let cls;
   if (set_class_name_with) {
     cls = set_class_name_with(value) || "";

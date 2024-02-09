@@ -24,6 +24,7 @@ const GaugeMinimal = ({
   minValue,
   maxValue,
   oid,
+  formula,
   state,
   warnValue,
   critValue,
@@ -154,6 +155,7 @@ const GaugeMinimal = ({
               <ItemValue
                 engine={engine}
                 oid={oid}
+                formula={formula}
                 state={state}
                 digits={digits}
                 units={units}

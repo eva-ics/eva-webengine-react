@@ -8,11 +8,14 @@ import {
   GaugeStandard,
   GaugeType
 } from "./index";
+import { useMemo } from "react";
+import { calculateFormula } from "bmat/numbers";
 
 const Gauge = ({
   minValue,
   maxValue,
   oid,
+  formula,
   state,
   type,
   engine,
@@ -43,7 +46,19 @@ const Gauge = ({
   label
 }: GaugeParams) => {
   const eva_state = useEvaState({ oid: oid, engine });
-  state = state ? state : eva_state;
+
+  state = useMemo(() => {
+    const s = state ? state : eva_state;
+    if (formula) {
+      try {
+        if (typeof s?.value === "number")
+          s.value = calculateFormula(formula, s.value);
+      } catch {
+        s.value = NaN;
+      }
+    }
+    return s;
+  }, [state, eva_state]);
 
   switch (type) {
     case GaugeType.Sphere:
@@ -52,6 +67,7 @@ const Gauge = ({
           minValue={minValue}
           maxValue={maxValue}
           oid={oid}
+          formula={formula}
           state={state}
           engine={engine}
           digits={digits}
@@ -87,6 +103,7 @@ const Gauge = ({
           minValue={minValue}
           maxValue={maxValue}
           oid={oid}
+          formula={formula}
           state={state}
           engine={engine}
           digits={digits}
@@ -122,6 +139,7 @@ const Gauge = ({
           minValue={minValue}
           maxValue={maxValue}
           oid={oid}
+          formula={formula}
           state={state}
           engine={engine}
           digits={digits}
@@ -157,6 +175,7 @@ const Gauge = ({
           minValue={minValue}
           maxValue={maxValue}
           oid={oid}
+          formula={formula}
           state={state}
           engine={engine}
           digits={digits}
@@ -187,6 +206,7 @@ const Gauge = ({
           minValue={minValue}
           maxValue={maxValue}
           oid={oid}
+          formula={formula}
           state={state}
           engine={engine}
           digits={digits}
