@@ -155,7 +155,6 @@ const GaugeStandard = ({
               <ItemValue
                 engine={engine}
                 oid={oid}
-                formula={formula}
                 state={state}
                 digits={digits}
                 units={units}

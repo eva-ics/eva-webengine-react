@@ -117,7 +117,7 @@ const ItemValue = ({
   }
 
   if (digits !== undefined) {
-    value = parseFloat(state.value).toFixed(digits);
+    value = parseFloat(value).toFixed(digits);
   }
 
   let cls;

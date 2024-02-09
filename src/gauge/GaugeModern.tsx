@@ -126,7 +126,6 @@ const GaugeModern = ({
               <ItemValue
                 engine={engine}
                 oid={oid}
-                formula={formula}
                 digits={digits}
                 units={units}
                 className={className}
