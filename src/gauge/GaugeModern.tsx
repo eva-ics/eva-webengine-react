@@ -24,7 +24,6 @@ const GaugeModern = ({
   minValue,
   maxValue,
   oid,
-  formula,
   state,
   warnValue,
   critValue,

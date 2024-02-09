@@ -24,7 +24,6 @@ const GaugeLight = ({
   minValue,
   maxValue,
   oid,
-  formula,
   state,
   warnValue,
   critValue,

@@ -24,7 +24,6 @@ const GaugeSphere = ({
   minValue,
   maxValue,
   oid,
-  formula,
   state,
   warnValue,
   critValue,
