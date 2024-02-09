@@ -1,3 +1,5 @@
+const eva_webengine_react_version = "0.2.15";
+
 import {
   Eva,
   EvaError,
@@ -18,6 +20,7 @@ const get_engine = (): Eva | null => {
 
 const set_engine = (engine: Eva) => {
   eva = engine;
+  (eva as any).wer_version = eva_webengine_react_version;
 };
 
 interface CanvasPosition {
