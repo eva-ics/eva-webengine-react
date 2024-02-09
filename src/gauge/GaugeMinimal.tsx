@@ -24,7 +24,6 @@ const GaugeMinimal = ({
   minValue,
   maxValue,
   oid,
-  formula,
   state,
   warnValue,
   critValue,
