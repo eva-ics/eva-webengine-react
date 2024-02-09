@@ -1,9 +1,11 @@
 import { useEvaState, calculateProgressColor } from "./common";
 import { ItemValue, ItemValueThreshold } from "./value";
 import { Eva } from "@eva-ics/webengine";
+import { calculateFormula } from "bmat/numbers";
 
 export interface ProgressBarParams {
   oid?: string;
+  formula?: string;
   minValue: number;
   maxValue: number;
   engine?: Eva;
@@ -26,6 +28,7 @@ export interface ProgressBarParams {
 
 export const ProgressBar = ({
   oid,
+  formula,
   minValue,
   maxValue,
   engine,
@@ -45,7 +48,15 @@ export const ProgressBar = ({
   label
 }: ProgressBarParams) => {
   const state = useEvaState({ oid, engine });
-  const { value } = state;
+  let value = state?.value;
+
+  if (formula && typeof value === "number") {
+    try {
+      value = calculateFormula(formula, value);
+    } catch {
+      value = NaN;
+    }
+  }
 
   const color = calculateProgressColor(
     "eva-progressbar",
@@ -94,6 +105,7 @@ export const ProgressBar = ({
               <ItemValue
                 engine={engine}
                 oid={oid}
+                formula={formula}
                 state={state}
                 digits={digits}
                 units={units}

@@ -1,9 +1,11 @@
 import { calculateProgressColor, useEvaState } from "./common";
 import { Eva } from "@eva-ics/webengine";
 import { ItemValueThreshold, ItemValue } from "./value";
+import { calculateFormula } from "bmat/numbers";
 
 export interface ThermometerParams {
   oid?: string;
+  formula?: string;
   minValue: number;
   maxValue: number;
   engine?: Eva;
@@ -26,6 +28,7 @@ export interface ThermometerParams {
 
 export const Thermometer = ({
   oid,
+  formula,
   minValue,
   maxValue,
   engine,
@@ -45,7 +48,15 @@ export const Thermometer = ({
   showMinMax
 }: ThermometerParams) => {
   const state = useEvaState({ oid, engine });
-  const { value } = state;
+  let value = state?.value;
+
+  if (formula && typeof value === "number") {
+    try {
+      value = calculateFormula(formula, value);
+    } catch {
+      value = NaN;
+    }
+  }
 
   const color = calculateProgressColor(
     "eva-thermometer",
@@ -97,6 +108,7 @@ export const Thermometer = ({
           <ItemValue
             engine={engine}
             oid={oid}
+            formula={formula}
             state={state}
             digits={digits}
             units={units}
