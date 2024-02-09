@@ -15,8 +15,12 @@ export interface StateHistoryOIDColMapping {
 /**
  * Generate CSV from useStateHistory hook data
  *
+ * note: timeColName is used with timeFormatter function only
+ *
+ * @param {object} __namedParameters Options
+ *
  * @param {any} data - hookResult.data
- * @param {StateHistoryOIDColMapping} mapping - OID + prop to col mapping
+ * @param {StateHistoryOIDColMapping[]} mapping - OID + prop to col mapping
  * @param {(t: number) => string} [timeFormatter] - a custom time formatting function
  * @param {string} [timeColName] - time column name (used in custom formatting only)
  */
