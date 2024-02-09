@@ -1,7 +1,6 @@
 import { Eva, ItemState } from "@eva-ics/webengine";
 import { useEvaState, CanvasPosition } from "./common";
 import { calculateFormula } from "bmat/numbers";
-import { useMemo } from "react";
 
 interface ItemValueDisplay {
   oid?: string;
@@ -101,12 +100,9 @@ const ItemValue = ({
   engine?: Eva;
 }) => {
   const eva_state = useEvaState({ oid: oid, engine });
+  const current_state = state ? state : eva_state;
 
-  state = useMemo(() => {
-    return state ? state : eva_state;
-  }, [state, eva_state]);
-
-  let value = state.value;
+  let value = current_state.value;
 
   if (formula && typeof value === "number") {
     try {
@@ -126,7 +122,7 @@ const ItemValue = ({
   } else {
     cls = className || "";
   }
-  switch (state.status) {
+  switch (current_state.status) {
     case -1:
       cls += " error";
       break;
@@ -134,9 +130,9 @@ const ItemValue = ({
       cls += " ok";
       break;
   }
-  if (state.connected == false) cls += " disconnected";
+  if (current_state.connected == false) cls += " disconnected";
   if (threshold) {
-    let v = parseFloat(state.value);
+    let v = parseFloat(current_state.value);
     for (const t of threshold) {
       if (v >= t.value) {
         cls += ` ${t.class}`;

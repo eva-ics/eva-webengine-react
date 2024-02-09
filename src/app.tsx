@@ -10,7 +10,6 @@ import {
   useEffect,
   useRef,
   useCallback,
-  useMemo,
   Dispatch,
   SetStateAction
 } from "react";
@@ -100,13 +99,10 @@ const HMIApp = ({
     state: AppStateKind.LoginSession
   });
 
-  const eva_engine: Eva = useMemo(() => {
-    const eva_engine = engine || (get_engine() as Eva);
-    if (!eva_engine) {
-      throw new Error("EVA ICS WebEngine not set");
-    }
-    return eva_engine;
-  }, [engine]);
+  const eva_engine = engine || (get_engine() as Eva);
+  if (!eva_engine) {
+    throw new Error("EVA ICS WebEngine not set");
+  }
 
   const [form, setForm] = useState<FormData>({
     login: "",
@@ -351,7 +347,10 @@ const OtpForm = ({
           </div>
           <div className="eva login qr">
             <div style={{ background: "white", padding: "10px" }}>
-              <QRCode size={(props?.otp_qr_size || 170) - 20} value={otp_setup} />
+              <QRCode
+                size={(props?.otp_qr_size || 170) - 20}
+                value={otp_setup}
+              />
             </div>
           </div>
         </>

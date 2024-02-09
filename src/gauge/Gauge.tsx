@@ -8,7 +8,6 @@ import {
   GaugeStandard,
   GaugeType
 } from "./index";
-import { useMemo } from "react";
 import { calculateFormula } from "bmat/numbers";
 
 const Gauge = ({
@@ -47,18 +46,17 @@ const Gauge = ({
 }: GaugeParams) => {
   const eva_state = useEvaState({ oid: oid, engine });
 
-  state = useMemo(() => {
-    const s = state ? state : eva_state;
-    if (formula) {
-      try {
-        if (typeof s?.value === "number")
-          s.value = calculateFormula(formula, s.value);
-      } catch {
-        s.value = NaN;
-      }
+  if (formula && formula !== "x") {
+    state = state ? { ...state } : { ...eva_state };
+    try {
+      if (typeof state?.value === "number")
+        state.value = calculateFormula(formula, state.value);
+    } catch {
+      state.value = NaN;
     }
-    return s;
-  }, [state, eva_state]);
+  } else {
+    state = state ? state : eva_state;
+  }
 
   switch (type) {
     case GaugeType.Sphere:
