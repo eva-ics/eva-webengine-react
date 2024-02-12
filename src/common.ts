@@ -67,6 +67,7 @@ interface EvaStateHistoryParams {
   update?: number;
   prop?: StateProp;
   fill?: string;
+  digits?: number;
   args?: any;
   engine?: Eva;
 }
@@ -125,7 +126,9 @@ const useEvaStateHistory = (params: EvaStateHistoryParams) => {
             s: t_start,
             e: t_end,
             x: x,
-            w: params.fill
+            w:
+              params.fill +
+              (params.digits === undefined ? "" : `:${params.digits}`)
           },
           ...api_opts
         };
@@ -158,6 +161,7 @@ const useEvaStateHistory = (params: EvaStateHistoryParams) => {
     params.timeframe,
     params.prop,
     params.fill,
+    params.digits,
     params.args,
     update_interval
   ]);

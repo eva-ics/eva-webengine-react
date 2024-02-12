@@ -8,6 +8,7 @@ const LineChart = ({
   oid,
   timeframe,
   formula,
+  digits,
   update,
   prop,
   fill,
@@ -24,6 +25,7 @@ const LineChart = ({
   oid: string | Array<string>;
   timeframe: string | Array<string>;
   formula?: string | Array<string>;
+  digits?: number;
   update: number;
   prop?: StateProp;
   fill?: string;
@@ -43,6 +45,7 @@ const LineChart = ({
     update: update,
     prop: prop,
     fill: fill,
+    digits: digits,
     args: args,
     engine: engine
   });
@@ -97,7 +100,10 @@ const LineChart = ({
           if (frm) {
             dataframe = state.data[d][key].map((n: number) => {
               try {
-                return calculateFormula(frm as string, n);
+                let val = calculateFormula(frm as string, n);
+                return digits === undefined || val === undefined
+                  ? val
+                  : parseFloat(val.toFixed(digits));
               } catch {
                 return NaN;
               }
