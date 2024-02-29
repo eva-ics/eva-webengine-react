@@ -65,6 +65,7 @@ interface EvaStateHistoryParams {
   oid?: string | Array<string>;
   timeframe: string | Array<string>;
   update?: number;
+  update_uninit?: number;
   prop?: StateProp;
   fill?: string;
   digits?: number;
@@ -154,7 +155,10 @@ const useEvaStateHistory = (params: EvaStateHistoryParams) => {
         });
     } else {
       setState({ data: null });
-      update_worker.current = setTimeout(updateHistory, update_interval);
+      update_worker.current = setTimeout(
+        updateHistory,
+        params.update_uninit ? params.update_uninit * 1000 : update_interval
+      );
     }
   }, [
     params.oid,
@@ -163,6 +167,7 @@ const useEvaStateHistory = (params: EvaStateHistoryParams) => {
     params.fill,
     params.digits,
     params.args,
+    params.update_uninit,
     update_interval,
   ]);
 
@@ -211,6 +216,7 @@ interface EvaAPICallParams {
   method?: string;
   params?: object;
   update?: number;
+  update_uninit?: number;
   engine?: Eva;
 }
 
@@ -260,9 +266,12 @@ const useEvaAPICall = (params: EvaAPICallParams) => {
         });
     } else {
       setState({ data: null });
-      update_worker.current = setTimeout(updateData, update_interval);
+      update_worker.current = setTimeout(
+        updateData,
+        params.update_uninit ? params.update_uninit * 1000 : update_interval
+      );
     }
-  }, [params.method, params.params, update_interval]);
+  }, [params.method, params.params, update_interval, params.update_uninit]);
 
   useEffect(() => {
     visible.current = true;
