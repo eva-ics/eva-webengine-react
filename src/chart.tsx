@@ -20,7 +20,8 @@ const LineChart = ({
   className,
   width,
   height,
-  engine
+  data_callback,
+  engine,
 }: {
   oid: string | Array<string>;
   timeframe: string | Array<string>;
@@ -37,6 +38,7 @@ const LineChart = ({
   className?: string;
   width?: number;
   height?: number;
+  data_callback?: (data: any) => void;
   engine?: Eva;
 }) => {
   const state = useEvaStateHistory({
@@ -47,10 +49,14 @@ const LineChart = ({
     fill: fill,
     digits: digits,
     args: args,
-    engine: engine
+    engine: engine,
   });
 
   const chart_style = { width: width, height: height };
+
+  if (data_callback) {
+    data_callback(state.data);
+  }
 
   if (state.data) {
     try {
@@ -62,7 +68,7 @@ const LineChart = ({
       }
       let data = {
         labels: state.data.t.map((t: number) => t * 1000),
-        datasets: []
+        datasets: [],
       };
       let xidx = 0;
       for (let d = 0; d < state.data.length; d++) {
@@ -116,7 +122,7 @@ const LineChart = ({
             label: label,
             borderColor: color,
             backgroundColor: color,
-            fill: false
+            fill: false,
           });
           xidx += 1;
         }
@@ -165,7 +171,7 @@ const LineChart = ({
           y: {
             type: "linear",
             display: true,
-            position: "left"
+            position: "left",
           },
           y1: {
             type: "linear",
@@ -173,8 +179,8 @@ const LineChart = ({
             position: "right",
 
             grid: {
-              drawOnChartArea: false // only want the grid lines for one axis to show up
-            }
+              drawOnChartArea: false, // only want the grid lines for one axis to show up
+            },
           },
           x: {
             type: "time",
@@ -182,7 +188,7 @@ const LineChart = ({
               unit: ct_unit,
               unitStepSize: 1,
               round: ct_unit,
-              tooltipFormat: ct_format
+              tooltipFormat: ct_format,
             },
             ticks: {
               fontSize: 12,
@@ -200,23 +206,23 @@ const LineChart = ({
                 } else {
                   return (this as any).getLabelForValue(value).split(" ");
                 }
-              }
-            }
-          }
+              },
+            },
+          },
         },
         plugins: {
           filler: {
-            propagate: true
+            propagate: true,
           },
           title: {
             text: title,
-            display: true
+            display: true,
           },
           legend: {
             display: xidx > 1,
-            position: "top"
-          }
-        }
+            position: "top",
+          },
+        },
       };
       let chart_ops = deepMerge(default_chart_ops, options);
       return (
