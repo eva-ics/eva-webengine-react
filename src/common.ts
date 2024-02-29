@@ -178,10 +178,9 @@ const useEvaStateHistory = (params: EvaStateHistoryParams) => {
         } else {
           setState({
             data: null,
-            error: new EvaError(
-              EvaErrorKind.INVALID_PARAMS,
-              "OID not specified"
-            ),
+            error: Array.isArray(params.oid)
+              ? undefined
+              : new EvaError(EvaErrorKind.INVALID_PARAMS, "OID not specified"),
           });
         }
       } else {
