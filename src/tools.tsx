@@ -2,14 +2,16 @@ import { StateProp } from "@eva-ics/webengine";
 import {
   generateDashTableRichCSV,
   ColumnRichInfo,
-  DashTableColType
+  DashTableColType,
 } from "bmat/dashtable";
+import { calculateFormula } from "bmat/numbers";
 
 export interface StateHistoryOIDColMapping {
   oid: string;
   name: string;
   tf_id?: number;
   prop?: StateProp;
+  formula?: string;
 }
 
 /**
@@ -23,12 +25,14 @@ export interface StateHistoryOIDColMapping {
  * @param {StateHistoryOIDColMapping[]} mapping - OID + prop to col mapping
  * @param {(t: number) => string} [timeFormatter] - a custom time formatting function
  * @param {string} [timeColName] - time column name (used in custom formatting only)
+ *
+ * @throws if a formula is specified but invalid
  */
 export const generateStateHistoryCSV = ({
   data,
   mapping,
   timeColName,
-  timeFormatter
+  timeFormatter,
 }: {
   data: any;
   mapping: StateHistoryOIDColMapping[];
@@ -44,8 +48,8 @@ export const generateStateHistoryCSV = ({
         {
           id: "t",
           name: timeColName || "time",
-          enabled: true
-        }
+          enabled: true,
+        },
       ]
     : [];
   const cols: ColumnRichInfo[] = time_cols.concat(
@@ -54,7 +58,7 @@ export const generateStateHistoryCSV = ({
         id: m.name,
         name: m.name,
         enabled: true,
-        columnType: DashTableColType.Integer
+        columnType: DashTableColType.Integer,
       };
     })
   );
@@ -75,6 +79,9 @@ export const generateStateHistoryCSV = ({
           const val = data_col[idx];
           if (val !== undefined) {
             value = val;
+            if (m.formula) {
+              value = calculateFormula(m.formula, value);
+            }
           }
         }
       }
@@ -85,6 +92,6 @@ export const generateStateHistoryCSV = ({
   return generateDashTableRichCSV({
     cols: cols,
     data: rData,
-    timeCol: timeFormatter ? undefined : "t"
+    timeCol: timeFormatter ? undefined : "t",
   });
 };
