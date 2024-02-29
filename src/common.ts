@@ -1,11 +1,11 @@
-const eva_webengine_react_version = "0.2.19";
+const eva_webengine_react_version = "0.2.20";
 
 import {
   Eva,
   EvaError,
   EvaErrorKind,
   StateProp,
-  ItemState
+  ItemState,
 } from "@eva-ics/webengine";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Mutex } from "async-mutex";
@@ -128,9 +128,9 @@ const useEvaStateHistory = (params: EvaStateHistoryParams) => {
             x: x,
             w:
               params.fill +
-              (params.digits === undefined ? "" : `:${params.digits}`)
+              (params.digits === undefined ? "" : `:${params.digits}`),
           },
-          ...api_opts
+          ...api_opts,
         };
         return eva_engine!.call(
           "item.state_history",
@@ -163,14 +163,17 @@ const useEvaStateHistory = (params: EvaStateHistoryParams) => {
     params.fill,
     params.digits,
     params.args,
-    update_interval
+    update_interval,
   ]);
 
   useEffect(() => {
     visible.current = true;
     if (!update_worker.current) {
       if (eva_engine) {
-        if (params.oid) {
+        if (
+          typeof params.oid === "string" ||
+          (Array.isArray(params.oid) && params.oid.length > 0)
+        ) {
           updateHistory();
         } else {
           setState({
@@ -178,7 +181,7 @@ const useEvaStateHistory = (params: EvaStateHistoryParams) => {
             error: new EvaError(
               EvaErrorKind.INVALID_PARAMS,
               "OID not specified"
-            )
+            ),
           });
         }
       } else {
@@ -200,7 +203,7 @@ const useEvaStateHistory = (params: EvaStateHistoryParams) => {
     params.fill,
     params.args,
     update_interval,
-    updateHistory
+    updateHistory,
   ]);
   return state;
 };
@@ -270,7 +273,7 @@ const useEvaAPICall = (params: EvaAPICallParams) => {
           updateData();
         } else {
           setState({
-            data: null
+            data: null,
           });
         }
       } else {
@@ -292,7 +295,7 @@ const useEvaAPICall = (params: EvaAPICallParams) => {
 enum EvaSubscriptionState {
   Working,
   Active,
-  Failed
+  Failed,
 }
 
 interface EvaStateUpdatesParams {
@@ -412,5 +415,5 @@ export {
   EvaSubscriptionState,
   EvaStateUpdatesParams,
   useEvaStateUpdates,
-  calculateProgressColor
+  calculateProgressColor,
 };
