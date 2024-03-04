@@ -1,4 +1,4 @@
-import { useEvaStateHistory } from "./common";
+import { useEvaStateHistory, StateHistoryData } from "./common";
 import { Line } from "react-chartjs-2";
 import { Eva, StateProp } from "@eva-ics/webengine";
 import { deepMerge } from "bmat/tools";
@@ -22,9 +22,10 @@ const LineChart = ({
   width,
   height,
   data_callback,
+  state,
   engine,
 }: {
-  oid: string | Array<string>;
+  oid?: string | Array<string>;
   timeframe: string | Array<string>;
   formula?: string | Array<string>;
   digits?: number;
@@ -40,9 +41,10 @@ const LineChart = ({
   width?: number;
   height?: number;
   data_callback?: (data: any) => void;
+  state: StateHistoryData;
   engine?: Eva;
 }) => {
-  const state = useEvaStateHistory({
+  const loaded_state = useEvaStateHistory({
     oid: oid,
     timeframe: timeframe,
     update: update,
@@ -53,15 +55,17 @@ const LineChart = ({
     engine: engine,
   });
 
+  const current_state = state || loaded_state;
+
   const chart_style = { width: width, height: height };
 
   useMemo(() => {
     if (data_callback) {
-      data_callback(state.data);
+      data_callback(current_state.data);
     }
-  }, [data_callback, state.data]);
+  }, [data_callback, current_state.data]);
 
-  if (state.data) {
+  if (current_state.data) {
     try {
       let x;
       if (prop) {
@@ -70,11 +74,11 @@ const LineChart = ({
         x = StateProp.Value;
       }
       let data = {
-        labels: state.data.t.map((t: number) => t * 1000),
+        labels: current_state.data.t.map((t: number) => t * 1000),
         datasets: [],
       };
       let xidx = 0;
-      for (let d = 0; d < state.data.length; d++) {
+      for (let d = 0; d < current_state.data.length; d++) {
         for (let i = 0; i < (Array.isArray(oid) ? oid.length : 1); i++) {
           let color;
           if (colors) {
@@ -107,7 +111,7 @@ const LineChart = ({
           }
           let dataframe;
           if (frm) {
-            dataframe = state.data[d][key].map((n: number) => {
+            dataframe = current_state.data[d][key].map((n: number) => {
               try {
                 let val = calculateFormula(frm as string, n);
                 return digits === undefined || val === undefined
@@ -118,7 +122,7 @@ const LineChart = ({
               }
             });
           } else {
-            dataframe = state.data[d][key];
+            dataframe = current_state.data[d][key];
           }
           (data.datasets as any).push({
             data: dataframe,
@@ -241,8 +245,8 @@ const LineChart = ({
         </div>
       );
     }
-  } else if (state.error) {
-    const err = `Error: ${state.error.message} (${state.error.code})`;
+  } else if (current_state.error) {
+    const err = `Error: ${current_state.error.message} (${current_state.error.code})`;
     return (
       <div style={chart_style} className={`eva chart error ${className}`}>
         {err}
