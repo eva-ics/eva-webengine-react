@@ -3,6 +3,7 @@ import { Line } from "react-chartjs-2";
 import { Eva, StateProp } from "@eva-ics/webengine";
 import { deepMerge } from "bmat/tools";
 import { calculateFormula } from "bmat/numbers";
+import { useMemo } from "react";
 
 const LineChart = ({
   oid,
@@ -54,9 +55,11 @@ const LineChart = ({
 
   const chart_style = { width: width, height: height };
 
-  if (data_callback) {
-    data_callback(state.data);
-  }
+  useMemo(() => {
+    if (data_callback) {
+      data_callback(state.data);
+    }
+  }, [data_callback, state.data]);
 
   if (state.data) {
     try {
