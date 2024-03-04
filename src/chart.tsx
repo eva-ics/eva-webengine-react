@@ -41,11 +41,15 @@ const LineChart = ({
   width?: number;
   height?: number;
   data_callback?: (data: any) => void;
-  state: StateHistoryData;
+  state?: StateHistoryData;
   engine?: Eva;
 }) => {
+  const hook_oids = useMemo(() => {
+    return state ? [] : oid;
+  }, [state, oid]);
+
   const loaded_state = useEvaStateHistory({
-    oid: oid,
+    oid: hook_oids,
     timeframe: timeframe,
     update: update,
     prop: prop,
