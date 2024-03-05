@@ -113,21 +113,23 @@ const LineChart = ({
           } else {
             key = x;
           }
-          let dataframe;
-          if (frm) {
-            dataframe = current_state.data[d][key].map((n: number) => {
-              try {
-                let val = calculateFormula(frm as string, n);
-                return digits === undefined || val === undefined
-                  ? val
-                  : parseFloat(val.toFixed(digits));
-              } catch {
-                return NaN;
-              }
-            });
-          } else {
-            dataframe = current_state.data[d][key];
-          }
+          let dataframe = [];
+          try {
+            if (frm) {
+              dataframe = current_state.data[d][key].map((n: number) => {
+                try {
+                  let val = calculateFormula(frm as string, n);
+                  return digits === undefined || val === undefined
+                    ? val
+                    : parseFloat(val.toFixed(digits));
+                } catch {
+                  return NaN;
+                }
+              });
+            } else {
+              dataframe = current_state.data[d][key];
+            }
+          } catch (e) {}
           (data.datasets as any).push({
             data: dataframe,
             label: label,
