@@ -6,6 +6,7 @@ const lib_name = "webengine-react";
 export default defineConfig({
   //plugins: [react()],
   build: {
+    sourcemap: true,
     rollupOptions: {
       external: [
         "@eva-ics/webengine",
@@ -14,8 +15,10 @@ export default defineConfig({
         "react-hot-toast",
         "react-qr-code",
         "react-chartjs-2",
+        "chart.js",
         "bmat",
         "bmat/dom",
+        "bmat/numbers",
         "bmat/tools",
         "bmat/dashtable"
       ]
