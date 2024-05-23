@@ -5,6 +5,7 @@ export {
   useEvaStateHistory,
   useEvaAPICall,
   useEvaStateUpdates,
+  useEvaStateBlock,
   EvaSubscriptionState
 } from "./common";
 export type {

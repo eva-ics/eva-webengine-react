@@ -5,7 +5,7 @@ import {
   EvaError,
   EvaErrorKind,
   StateProp,
-  ItemState,
+  ItemState
 } from "@eva-ics/webengine";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Mutex } from "async-mutex";
@@ -52,8 +52,27 @@ const useEvaState = (params: EvaStateParams) => {
         eva_engine.unwatch(params.oid, setState);
       }
     };
-  }, [params.oid]);
+  }, []);
   return state;
+};
+
+interface EvaStateBlockParams {
+  name: string;
+  state_updates: string[];
+  engine?: Eva;
+}
+
+const useEvaStateBlock = (params: EvaStateBlockParams) => {
+  const eva_engine: Eva = params.engine || (eva as Eva);
+  if (!eva_engine) {
+    throw new Error("EVA ICS WebEngine not set");
+  }
+  return useEffect(() => {
+    eva_engine.register_state_block(params.name, params.state_updates);
+    return () => {
+      eva_engine.unregister_state_block(params.name);
+    };
+  }, []);
 };
 
 interface StateHistoryData {
@@ -129,9 +148,9 @@ const useEvaStateHistory = (params: EvaStateHistoryParams) => {
             x: x,
             w:
               params.fill +
-              (params.digits === undefined ? "" : `:${params.digits}`),
+              (params.digits === undefined ? "" : `:${params.digits}`)
           },
-          ...api_opts,
+          ...api_opts
         };
         return eva_engine!.call(
           "item.state_history",
@@ -168,7 +187,7 @@ const useEvaStateHistory = (params: EvaStateHistoryParams) => {
     params.digits,
     params.args,
     params.update_uninit,
-    update_interval,
+    update_interval
   ]);
 
   useEffect(() => {
@@ -185,7 +204,7 @@ const useEvaStateHistory = (params: EvaStateHistoryParams) => {
             data: null,
             error: Array.isArray(params.oid)
               ? undefined
-              : new EvaError(EvaErrorKind.INVALID_PARAMS, "OID not specified"),
+              : new EvaError(EvaErrorKind.INVALID_PARAMS, "OID not specified")
           });
         }
       } else {
@@ -200,15 +219,7 @@ const useEvaStateHistory = (params: EvaStateHistoryParams) => {
       update_worker_enabled.current.enabled = false;
       update_worker_enabled.current = { enabled: false };
     };
-  }, [
-    params.oid,
-    params.timeframe,
-    params.prop,
-    params.fill,
-    params.args,
-    update_interval,
-    updateHistory,
-  ]);
+  }, []);
   return state;
 };
 
@@ -281,7 +292,7 @@ const useEvaAPICall = (params: EvaAPICallParams) => {
           updateData();
         } else {
           setState({
-            data: null,
+            data: null
           });
         }
       } else {
@@ -296,14 +307,14 @@ const useEvaAPICall = (params: EvaAPICallParams) => {
       update_worker_enabled.current.enabled = false;
       update_worker_enabled.current = { enabled: false };
     };
-  }, [params.method, params.params, updateData]);
+  }, []);
   return state;
 };
 
 enum EvaSubscriptionState {
   Working,
   Active,
-  Failed,
+  Failed
 }
 
 interface EvaStateUpdatesParams {
@@ -314,10 +325,7 @@ interface EvaStateUpdatesParams {
   append?: boolean;
 }
 
-const useEvaStateUpdates = (
-  params: EvaStateUpdatesParams,
-  dependencies?: any
-) => {
+const useEvaStateUpdates = (params: EvaStateUpdatesParams) => {
   const [state, setState] = useState(EvaSubscriptionState.Working);
 
   const eva_engine: Eva = params.engine || (eva as Eva);
@@ -374,7 +382,7 @@ const useEvaStateUpdates = (
         });
       }
     };
-  }, dependencies);
+  }, []);
   return state;
 };
 
@@ -423,5 +431,6 @@ export {
   EvaSubscriptionState,
   EvaStateUpdatesParams,
   useEvaStateUpdates,
-  calculateProgressColor,
+  useEvaStateBlock,
+  calculateProgressColor
 };
