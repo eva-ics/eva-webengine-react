@@ -1,4 +1,4 @@
-const eva_webengine_react_version = "0.2.28";
+const eva_webengine_react_version = "0.3.1";
 
 import {
   Eva,
@@ -33,7 +33,7 @@ interface EvaStateParams {
   engine?: Eva;
 }
 
-const useEvaState = (params: EvaStateParams) => {
+const useEvaState = (params: EvaStateParams, dependencies?: any) => {
   const [state, setState] = useState({} as ItemState);
 
   const eva_engine: Eva = params.engine || (eva as Eva);
@@ -52,7 +52,7 @@ const useEvaState = (params: EvaStateParams) => {
         eva_engine.unwatch(params.oid, setState);
       }
     };
-  }, []);
+  }, dependencies);
   return state;
 };
 
@@ -62,7 +62,7 @@ interface EvaStateBlockParams {
   engine?: Eva;
 }
 
-const useEvaStateBlock = (params: EvaStateBlockParams) => {
+const useEvaStateBlock = (params: EvaStateBlockParams, dependencies?: any) => {
   const eva_engine: Eva = params.engine || (eva as Eva);
   if (!eva_engine) {
     throw new Error("EVA ICS WebEngine not set");
@@ -72,7 +72,7 @@ const useEvaStateBlock = (params: EvaStateBlockParams) => {
     return () => {
       eva_engine.unregister_state_block(params.name);
     };
-  }, []);
+  }, [dependencies]);
 };
 
 interface StateHistoryData {
@@ -96,7 +96,10 @@ interface UpdateWorkerEnabled {
   enabled: boolean;
 }
 
-const useEvaStateHistory = (params: EvaStateHistoryParams) => {
+const useEvaStateHistory = (
+  params: EvaStateHistoryParams,
+  dependencies: any
+) => {
   const [state, setState] = useState({ data: null } as StateHistoryData);
   const visible = useRef(false);
   const update_worker = useRef<any>(null);
@@ -219,7 +222,7 @@ const useEvaStateHistory = (params: EvaStateHistoryParams) => {
       update_worker_enabled.current.enabled = false;
       update_worker_enabled.current = { enabled: false };
     };
-  }, []);
+  }, [dependencies]);
   return state;
 };
 
@@ -236,7 +239,7 @@ interface APICallData {
   error?: EvaError;
 }
 
-const useEvaAPICall = (params: EvaAPICallParams) => {
+const useEvaAPICall = (params: EvaAPICallParams, dependencies?: any) => {
   const [state, setState] = useState<APICallData>({ data: null });
   const visible = useRef(false);
   const update_worker: any = useRef(null);
@@ -307,7 +310,7 @@ const useEvaAPICall = (params: EvaAPICallParams) => {
       update_worker_enabled.current.enabled = false;
       update_worker_enabled.current = { enabled: false };
     };
-  }, []);
+  }, [dependencies]);
   return state;
 };
 
@@ -325,7 +328,10 @@ interface EvaStateUpdatesParams {
   append?: boolean;
 }
 
-const useEvaStateUpdates = (params: EvaStateUpdatesParams) => {
+const useEvaStateUpdates = (
+  params: EvaStateUpdatesParams,
+  dependencies?: any
+) => {
   const [state, setState] = useState(EvaSubscriptionState.Working);
 
   const eva_engine: Eva = params.engine || (eva as Eva);
@@ -382,7 +388,7 @@ const useEvaStateUpdates = (params: EvaStateUpdatesParams) => {
         });
       }
     };
-  }, []);
+  }, dependencies);
   return state;
 };
 
@@ -421,6 +427,7 @@ export {
   set_engine,
   CanvasPosition,
   useEvaState,
+  useEvaStateBlock,
   useEvaStateHistory,
   useEvaAPICall,
   EvaStateParams,
@@ -431,6 +438,5 @@ export {
   EvaSubscriptionState,
   EvaStateUpdatesParams,
   useEvaStateUpdates,
-  useEvaStateBlock,
   calculateProgressColor
 };
