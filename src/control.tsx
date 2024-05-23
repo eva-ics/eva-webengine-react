@@ -137,7 +137,7 @@ const ControlButtonToggle = ({
   on_fail?: (err: EvaError) => void;
   disabled_actions?: boolean;
 }) => {
-  const state = useEvaState({ oid: oid, engine });
+  const state = useEvaState({ oid, engine }, [oid, engine]);
 
   const handle_action = (e: ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
@@ -188,7 +188,7 @@ const ControlButtonValue = ({
   on_fail?: (err: EvaError) => void;
   disabled_actions?: boolean;
 }) => {
-  const state = useEvaState({ oid: oid, engine });
+  const state = useEvaState({ oid: oid, engine }, [oid, engine]);
   const [value, setValue] = useState(state.value);
   const id = useId();
   const valueRef = useRef(null);
@@ -287,7 +287,7 @@ const ControlButtonRun = ({
   on_fail?: (err: EvaError) => void;
   disabled_actions?: boolean;
 }) => {
-  const state_busy = useEvaState({ oid: busy, engine });
+  const state_busy = useEvaState({ oid: busy, engine }, [busy, engine]);
 
   const handle_action = (e: MouseEvent) => {
     e.preventDefault();

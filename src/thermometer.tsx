@@ -47,7 +47,7 @@ export const Thermometer = ({
   label,
   showMinMax
 }: ThermometerParams) => {
-  const state = useEvaState({ oid, engine });
+  const state = useEvaState({ oid, engine }, [oid, engine]);
   let value = state?.value;
 
   if (formula && typeof value === "number") {

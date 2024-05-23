@@ -44,7 +44,7 @@ const Gauge = ({
   showValue,
   label
 }: GaugeParams) => {
-  const eva_state = useEvaState({ oid: oid, engine });
+  const eva_state = useEvaState({ oid, engine }, [oid, engine]);
 
   if (formula && formula !== "x") {
     state = state ? { ...state } : { ...eva_state };

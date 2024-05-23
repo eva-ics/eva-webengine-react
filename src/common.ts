@@ -33,7 +33,7 @@ interface EvaStateParams {
   engine?: Eva;
 }
 
-const useEvaState = (params: EvaStateParams, dependencies?: any) => {
+const useEvaState = (params: EvaStateParams, dependencies: Array<any>) => {
   const [state, setState] = useState({} as ItemState);
 
   const eva_engine: Eva = params.engine || (eva as Eva);
@@ -62,7 +62,7 @@ interface EvaStateBlockParams {
   engine?: Eva;
 }
 
-const useEvaStateBlock = (params: EvaStateBlockParams, dependencies?: any) => {
+const useEvaStateBlock = (params: EvaStateBlockParams, dependencies: Array<any>) => {
   const eva_engine: Eva = params.engine || (eva as Eva);
   if (!eva_engine) {
     throw new Error("EVA ICS WebEngine not set");
@@ -72,7 +72,7 @@ const useEvaStateBlock = (params: EvaStateBlockParams, dependencies?: any) => {
     return () => {
       eva_engine.unregister_state_block(params.name);
     };
-  }, [dependencies]);
+  }, dependencies);
 };
 
 interface StateHistoryData {
@@ -98,7 +98,7 @@ interface UpdateWorkerEnabled {
 
 const useEvaStateHistory = (
   params: EvaStateHistoryParams,
-  dependencies: any
+  dependencies: Array<any>
 ) => {
   const [state, setState] = useState({ data: null } as StateHistoryData);
   const visible = useRef(false);
@@ -222,7 +222,7 @@ const useEvaStateHistory = (
       update_worker_enabled.current.enabled = false;
       update_worker_enabled.current = { enabled: false };
     };
-  }, [dependencies]);
+  }, dependencies);
   return state;
 };
 
@@ -239,7 +239,7 @@ interface APICallData {
   error?: EvaError;
 }
 
-const useEvaAPICall = (params: EvaAPICallParams, dependencies?: any) => {
+const useEvaAPICall = (params: EvaAPICallParams, dependencies: Array<any>) => {
   const [state, setState] = useState<APICallData>({ data: null });
   const visible = useRef(false);
   const update_worker: any = useRef(null);
@@ -310,7 +310,7 @@ const useEvaAPICall = (params: EvaAPICallParams, dependencies?: any) => {
       update_worker_enabled.current.enabled = false;
       update_worker_enabled.current = { enabled: false };
     };
-  }, [dependencies]);
+  }, dependencies);
   return state;
 };
 
@@ -330,7 +330,7 @@ interface EvaStateUpdatesParams {
 
 const useEvaStateUpdates = (
   params: EvaStateUpdatesParams,
-  dependencies?: any
+  dependencies: Array<any>
 ) => {
   const [state, setState] = useState(EvaSubscriptionState.Working);
 

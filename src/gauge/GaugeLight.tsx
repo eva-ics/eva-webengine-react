@@ -120,8 +120,8 @@ const GaugeLight = ({
             />
           )}
           <g id="ticks">
-            {ticks.map((angle) => (
-              <React.Fragment key={`tick-group-${angle}`}>
+            {ticks.map((angle, i) => (
+              <React.Fragment key={`tick-group-${i}`}>
                 <line
                   className={GaugeProgressColor.Tick}
                   {...getTickProps({ angle, length: tickLength })}

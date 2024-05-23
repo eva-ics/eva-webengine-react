@@ -99,7 +99,7 @@ const ItemValue = ({
   set_class_name_with?: (value: any) => string | undefined;
   engine?: Eva;
 }) => {
-  const eva_state = useEvaState({ oid: oid, engine });
+  const eva_state = useEvaState({ oid, engine }, [oid, engine]);
   const current_state = state ? state : eva_state;
 
   let value = current_state.value;
