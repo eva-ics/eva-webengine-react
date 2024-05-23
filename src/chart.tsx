@@ -48,16 +48,19 @@ const LineChart = ({
     return state ? [] : oid;
   }, [state, oid]);
 
-  const loaded_state = useEvaStateHistory({
-    oid: hook_oids,
-    timeframe: timeframe,
-    update: update,
-    prop: prop,
-    fill: fill,
-    digits: digits,
-    args: args,
-    engine: engine
-  });
+  const loaded_state = useEvaStateHistory(
+    {
+      oid: hook_oids,
+      timeframe: timeframe,
+      update: update,
+      prop: prop,
+      fill: fill,
+      digits: digits,
+      args: args,
+      engine: engine
+    },
+    [hook_oids, timeframe, update, prop, fill, digits, args, engine]
+  );
 
   const current_state = state || loaded_state;
 
