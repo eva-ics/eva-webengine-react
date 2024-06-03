@@ -1,4 +1,4 @@
-const eva_webengine_react_version = "0.3.1";
+const eva_webengine_react_version = "0.3.3";
 
 import {
   Eva,
@@ -38,9 +38,12 @@ const useEvaState = (params: EvaStateParams, dependencies: Array<any>) => {
 
   const eva_engine: Eva = params.engine || (eva as Eva);
   useEffect(() => {
+    const setItemState = (state: ItemState) => {
+      setState(state);
+    };
     if (params.oid) {
       if (eva_engine) {
-        eva_engine.watch(params.oid, setState);
+        eva_engine.watch(params.oid, setItemState);
       } else {
         throw new Error("EVA ICS WebEngine not set");
       }
@@ -49,7 +52,7 @@ const useEvaState = (params: EvaStateParams, dependencies: Array<any>) => {
     }
     return () => {
       if (eva_engine && params.oid) {
-        eva_engine.unwatch(params.oid, setState);
+        eva_engine.unwatch(params.oid, setItemState);
       }
     };
   }, dependencies);
@@ -62,7 +65,10 @@ interface EvaStateBlockParams {
   engine?: Eva;
 }
 
-const useEvaStateBlock = (params: EvaStateBlockParams, dependencies: Array<any>) => {
+const useEvaStateBlock = (
+  params: EvaStateBlockParams,
+  dependencies: Array<any>
+) => {
   const eva_engine: Eva = params.engine || (eva as Eva);
   if (!eva_engine) {
     throw new Error("EVA ICS WebEngine not set");
