@@ -43,7 +43,7 @@ const useEvaState = (params: EvaStateParams, dependencies: Array<any>) => {
     };
     if (params.oid) {
       if (eva_engine) {
-        eva_engine.watch(params.oid, setItemState);
+        eva_engine.watch(params.oid, setItemState, false, true);
       } else {
         throw new Error("EVA ICS WebEngine not set");
       }
