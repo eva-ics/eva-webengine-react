@@ -1,4 +1,4 @@
-const eva_webengine_react_version = "0.4.1";
+const eva_webengine_react_version = "0.4.2";
 
 import {
   Eva,
@@ -188,16 +188,7 @@ const useEvaStateHistory = (
         params.update_uninit ? params.update_uninit * 1000 : update_interval
       );
     }
-  }, [
-    params.oid,
-    params.timeframe,
-    params.prop,
-    params.fill,
-    params.digits,
-    params.args,
-    params.update_uninit,
-    update_interval
-  ]);
+  }, dependencies);
 
   useEffect(() => {
     visible.current = true;
