@@ -219,7 +219,7 @@ const useEvaStateHistory = (
       update_worker_enabled.current.enabled = false;
       update_worker_enabled.current = { enabled: false };
     };
-  }, dependencies);
+  }, [updateHistory]);
   return state;
 };
 
