@@ -1,4 +1,4 @@
-const eva_webengine_react_version = "0.4.2";
+const eva_webengine_react_version = "0.4.3";
 
 import {
   Eva,
@@ -38,8 +38,8 @@ const useEvaState = (params: EvaStateParams, dependencies: Array<any>) => {
 
   const eva_engine: Eva = params.engine || (eva as Eva);
   useEffect(() => {
-    const setItemState = (state: ItemState) => {
-      setState(state);
+    const setItemState = (s: ItemState) => {
+      setState(s);
     };
     if (params.oid) {
       if (eva_engine) {
@@ -53,6 +53,47 @@ const useEvaState = (params: EvaStateParams, dependencies: Array<any>) => {
     return () => {
       if (eva_engine && params.oid) {
         eva_engine.unwatch(params.oid, setItemState);
+      }
+    };
+  }, dependencies);
+  return state;
+};
+
+interface EvaStateBulkParams {
+  oid?: Array<string>;
+  engine?: Eva;
+}
+
+const useEvaStateBulk = (
+  params: EvaStateBulkParams,
+  dependencies: Array<any>
+) => {
+  const [state, setState] = useState<{ [key: string]: ItemState }>({});
+
+  const eva_engine: Eva = params.engine || (eva as Eva);
+  useEffect(() => {
+    const setItemState = (s: ItemState) => {
+      if (s.oid) {
+        state[s.oid] = s;
+        setState({ ...state });
+      }
+    };
+    if (params.oid && params.oid.length > 0) {
+      if (eva_engine) {
+        params.oid.forEach((oid) => {
+          eva_engine.watch(oid, setItemState, false, true);
+        });
+      } else {
+        throw new Error("EVA ICS WebEngine not set");
+      }
+    } else {
+      setState({});
+    }
+    return () => {
+      if (eva_engine && params.oid && params.oid.length > 0) {
+        params.oid.forEach((oid) => {
+          eva_engine.unwatch(oid, setItemState);
+        });
       }
     };
   }, dependencies);
@@ -424,6 +465,7 @@ export {
   set_engine,
   CanvasPosition,
   useEvaState,
+  useEvaStateBulk,
   useEvaStateBlock,
   useEvaStateHistory,
   useEvaAPICall,

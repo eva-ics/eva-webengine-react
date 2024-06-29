@@ -2,6 +2,7 @@ export {
   get_engine,
   set_engine,
   useEvaState,
+  useEvaStateBulk,
   useEvaStateHistory,
   useEvaAPICall,
   useEvaStateUpdates,
