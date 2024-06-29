@@ -11,6 +11,7 @@ export {
 } from "./common";
 export type {
   EvaStateParams,
+  EvaStateBulkParams,
   EvaStateHistoryParams,
   CanvasPosition,
   EvaAPICallParams,

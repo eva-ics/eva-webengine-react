@@ -1,4 +1,4 @@
-const eva_webengine_react_version = "0.4.3";
+const eva_webengine_react_version = "0.4.4";
 
 import {
   Eva,
@@ -470,6 +470,7 @@ export {
   useEvaStateHistory,
   useEvaAPICall,
   EvaStateParams,
+  EvaStateBulkParams,
   EvaStateHistoryParams,
   StateHistoryData,
   EvaAPICallParams,
