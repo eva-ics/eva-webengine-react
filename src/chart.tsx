@@ -1,9 +1,43 @@
 import { useEvaStateHistory, StateHistoryData } from "./common";
-import { Line } from "react-chartjs-2";
+import { Line, Bar, Radar, Doughnut } from "react-chartjs-2";
 import { Eva, StateProp } from "@eva-ics/webengine";
 import { deepMerge } from "bmat/tools";
 import { calculateFormula } from "bmat/numbers";
 import { useMemo } from "react";
+
+enum ChartKind {
+  Line = "line",
+  Bar = "bar",
+  Radar = "radar",
+  Doughnut = "doughnut"
+}
+
+const Chart = ({
+  datasetIdKey,
+  data,
+  options,
+  kind
+}: {
+  datasetIdKey: string;
+  data: any;
+  options: any;
+  kind: ChartKind;
+}) => {
+  switch (kind) {
+    case ChartKind.Line:
+      return <Line datasetIdKey={datasetIdKey} data={data} options={options} />;
+    case ChartKind.Bar:
+      return <Bar datasetIdKey={datasetIdKey} data={data} options={options} />;
+    case ChartKind.Radar:
+      return (
+        <Radar datasetIdKey={datasetIdKey} data={data} options={options} />
+      );
+    case ChartKind.Doughnut:
+      return (
+        <Doughnut datasetIdKey={datasetIdKey} data={data} options={options} />
+      );
+  }
+};
 
 const LineChart = ({
   oid,
@@ -23,6 +57,7 @@ const LineChart = ({
   height,
   data_callback,
   state,
+  kind,
   engine
 }: {
   oid?: string | Array<string>;
@@ -42,6 +77,7 @@ const LineChart = ({
   height?: number;
   data_callback?: (data: any) => void;
   state?: StateHistoryData;
+  kind?: ChartKind;
   engine?: Eva;
 }) => {
   const hook_oids = useMemo(() => {
@@ -245,7 +281,12 @@ const LineChart = ({
       let chart_ops = deepMerge(default_chart_ops, options);
       return (
         <div style={chart_style} className={`eva chart container ${className}`}>
-          <Line datasetIdKey="id" data={data} options={chart_ops} />
+          <Chart
+            kind={kind || ChartKind.Line}
+            datasetIdKey="id"
+            data={data}
+            options={chart_ops}
+          />
         </div>
       );
     } catch (error) {
