@@ -12,7 +12,7 @@ enum ChartKind {
   Doughnut = "doughnut"
 }
 
-const Chart = ({
+const ChartDisplay = ({
   datasetIdKey,
   data,
   options,
@@ -57,6 +57,68 @@ const LineChart = ({
   height,
   data_callback,
   state,
+  engine
+}: {
+  oid?: string | Array<string>;
+  timeframe: string | Array<string>;
+  formula?: string | Array<string>;
+  digits?: number;
+  update: number;
+  prop?: StateProp;
+  fill?: string;
+  args?: any;
+  colors?: Array<string>;
+  labels?: Array<string>;
+  title?: string;
+  options?: any;
+  className?: string;
+  width?: number;
+  height?: number;
+  data_callback?: (data: any) => void;
+  state?: StateHistoryData;
+  engine?: Eva;
+}) => {
+  return Chart({
+    oid,
+    timeframe,
+    formula,
+    digits,
+    update,
+    prop,
+    fill,
+    args,
+    colors,
+    labels,
+    title,
+    options,
+    className,
+    width,
+    height,
+    data_callback,
+    state,
+    kind: ChartKind.Line,
+    engine
+  });
+};
+
+const Chart = ({
+  oid,
+  timeframe,
+  formula,
+  digits,
+  update,
+  prop,
+  fill,
+  args,
+  colors,
+  labels,
+  title,
+  options,
+  className,
+  width,
+  height,
+  data_callback,
+  state,
   kind,
   engine
 }: {
@@ -77,7 +139,7 @@ const LineChart = ({
   height?: number;
   data_callback?: (data: any) => void;
   state?: StateHistoryData;
-  kind?: ChartKind;
+  kind: ChartKind;
   engine?: Eva;
 }) => {
   const hook_oids = useMemo(() => {
@@ -281,8 +343,8 @@ const LineChart = ({
       let chart_ops = deepMerge(default_chart_ops, options);
       return (
         <div style={chart_style} className={`eva chart container ${className}`}>
-          <Chart
-            kind={kind || ChartKind.Line}
+          <ChartDisplay
+            kind={kind}
             datasetIdKey="id"
             data={data}
             options={chart_ops}
@@ -314,4 +376,4 @@ const LineChart = ({
   }
 };
 
-export { LineChart };
+export { LineChart, Chart, ChartKind };
