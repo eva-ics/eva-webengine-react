@@ -32,7 +32,7 @@ export {
   ControlButtonRun
 } from "./control";
 export { Canvas } from "./canvas";
-export { Chart, LineChart } from "./chart";
+export { Chart, LineChart, ChartKind } from "./chart";
 export {
   GaugeType,
   StrokeLineCap as GaugeStrokeLineCap,
@@ -43,5 +43,4 @@ export { Thermometer } from "./thermometer";
 export { ProgressBar } from "./progressbar";
 export { EvaErrorMessage } from "./error";
 export type { StateHistoryOIDColMapping } from "./tools";
-export type { ChartKind } from "./chart";
 export { generateStateHistoryCSV } from "./tools";
