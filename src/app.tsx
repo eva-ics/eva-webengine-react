@@ -57,6 +57,7 @@ interface LoginProps {
   otp_qr_size?: number;
   cache_login?: boolean;
   cache_auth?: boolean;
+  keep_engine_auth?: boolean;
   register_globals?: boolean;
 }
 
@@ -148,8 +149,10 @@ const HMIApp = ({
 
   useEffect(() => {
     eva_engine.on(EventKind.LoginSuccess, () => {
-      eva_engine.login = "";
-      eva_engine.login_xopts = null;
+      if (!login_props?.keep_engine_auth) {
+        eva_engine.login = "";
+        eva_engine.login_xopts = null;
+      }
       if (login_props?.cache_auth) {
         if (form.remember) {
           if (eva_engine.password && app_state.state == AppStateKind.Login) {
@@ -161,7 +164,9 @@ const HMIApp = ({
           } catch (e) {}
         }
       }
-      eva_engine.password = "";
+      if (!login_props?.keep_engine_auth) {
+        eva_engine.password = "";
+      }
       setAppState({ state: AppStateKind.Active });
     });
   }, [form.remember, login_props, app_state, eva_engine]);
