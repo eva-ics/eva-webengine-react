@@ -198,7 +198,7 @@ const HMIApp = ({
         (eva_engine.apikey || (eva_engine.login && eva_engine.password))
       ) {
         eva_engine.erase_token_cookie();
-        eva_engine.start();
+        eva_engine._schedule_restart();
         return;
       }
       // delete password cookie if access denied
