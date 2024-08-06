@@ -191,6 +191,16 @@ const HMIApp = ({
 
   useEffect(() => {
     eva_engine.on(EventKind.LoginFailed, (err: EvaError) => {
+      // try to re-login in case of invalid token
+      if (
+        err.code == EvaErrorKind.ACCESS_DENIED &&
+        err.message == "invalid token" &&
+        (eva_engine.apikey || (eva_engine.login && eva_engine.password))
+      ) {
+        eva_engine.erase_token_cookie();
+        eva_engine.start();
+        return;
+      }
       // delete password cookie if access denied
       if (
         err.code == EvaErrorKind.ACCESS_DENIED &&
