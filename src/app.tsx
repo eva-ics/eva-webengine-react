@@ -194,7 +194,8 @@ const HMIApp = ({
       // try to re-login in case of invalid token
       if (
         err.code == EvaErrorKind.ACCESS_DENIED &&
-        err.message == "invalid token" &&
+        (err.message == "invalid token" ||
+          err.message == "No token/API key specified") &&
         (eva_engine.apikey || (eva_engine.login && eva_engine.password))
       ) {
         eva_engine.erase_token_cookie();
