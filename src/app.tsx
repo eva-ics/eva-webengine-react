@@ -224,6 +224,11 @@ const HMIApp = ({
     switch (app_state.state) {
       // try to login with an existing session or basic auth
       case AppStateKind.LoginSession:
+        // set login/password for further login attempts
+        if (login_props?.cache_auth && login_props?.keep_engine_auth) {
+          eva_engine.login = cookies.read(CookieNames.Login) || "";
+          eva_engine.password = cookies.read(CookieNames.Password) || "";
+        }
         eva_engine.start();
         break;
       case AppStateKind.LoginAuto:
