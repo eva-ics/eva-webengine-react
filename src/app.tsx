@@ -202,6 +202,14 @@ const HMIApp = ({
         eva_engine.restart();
         return;
       }
+      // handle server error
+      if (
+        err.code == EvaErrorKind.CORE_ERROR &&
+        err.message == "Server error"
+      ) {
+        eva_engine.restart();
+        return;
+      }
       // delete password cookie if access denied
       if (
         err.code == EvaErrorKind.ACCESS_DENIED &&
