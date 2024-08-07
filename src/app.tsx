@@ -207,6 +207,7 @@ const HMIApp = ({
         err.code == EvaErrorKind.CORE_ERROR &&
         err.message == "Server error"
       ) {
+        setAppState({ state: AppStateKind.Login });
         eva_engine.restart();
         return;
       }
