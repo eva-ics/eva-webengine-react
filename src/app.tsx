@@ -57,7 +57,6 @@ interface LoginProps {
   otp_qr_size?: number;
   cache_login?: boolean;
   cache_auth?: boolean;
-  keep_engine_auth?: boolean;
   register_globals?: boolean;
 }
 
@@ -117,9 +116,7 @@ const HMIApp = ({
         cookies.erase(CookieNames.Password);
       } catch (e) {}
       await eva_engine.stop();
-      eva_engine.login = "";
-      eva_engine.password = "";
-      eva_engine.apikey = "";
+      eva_engine.clear_auth();
     } catch (e) {}
     setAppState({ state: AppStateKind.LoginForm });
   }, [eva_engine]);
@@ -136,9 +133,7 @@ const HMIApp = ({
       hmi.login = (login: string, password: string) => {
         setAppState({ state: AppStateKind.Login });
         eva_engine.stop().finally(() => {
-          eva_engine.login = login;
-          eva_engine.password = password;
-          eva_engine.apikey = "";
+          eva_engine.set_login_password(login, password);
           setForm({ login: "", password: "", remember: false });
           eva_engine.start();
         });
@@ -149,24 +144,6 @@ const HMIApp = ({
 
   useEffect(() => {
     eva_engine.on(EventKind.LoginSuccess, () => {
-      if (!login_props?.keep_engine_auth) {
-        eva_engine.login = "";
-        eva_engine.login_xopts = null;
-      }
-      if (login_props?.cache_auth) {
-        if (form.remember) {
-          if (eva_engine.password && app_state.state == AppStateKind.Login) {
-            cookies.create(CookieNames.Password, eva_engine.password, 365);
-          }
-        } else {
-          try {
-            cookies.erase(CookieNames.Password);
-          } catch (e) {}
-        }
-      }
-      if (!login_props?.keep_engine_auth) {
-        eva_engine.password = "";
-      }
       setAppState({ state: AppStateKind.Active });
     });
   }, [form.remember, login_props, app_state, eva_engine]);
@@ -196,7 +173,7 @@ const HMIApp = ({
         err.code == EvaErrorKind.ACCESS_DENIED &&
         (err.message == "invalid token" ||
           err.message == "No token/API key specified") &&
-        (eva_engine.apikey || (eva_engine.login && eva_engine.password))
+        eva_engine.is_auth_set()
       ) {
         eva_engine.erase_token_cookie();
         eva_engine.restart();
@@ -234,19 +211,23 @@ const HMIApp = ({
       // try to login with an existing session or basic auth
       case AppStateKind.LoginSession:
         // set login/password for further login attempts
-        if (login_props?.cache_auth && login_props?.keep_engine_auth) {
-          eva_engine.login = cookies.read(CookieNames.Login) || "";
-          eva_engine.password = cookies.read(CookieNames.Password) || "";
+        if (login_props?.cache_auth) {
+          eva_engine.set_login_password(
+            cookies.read(CookieNames.Login) || "",
+            cookies.read(CookieNames.Password) || ""
+          );
         }
         eva_engine.start();
         break;
       case AppStateKind.LoginAuto:
         // try to auto login if there is a token in cookies or basic auth is used
         if (login_props?.cache_auth) {
-          eva_engine.login = cookies.read(CookieNames.Login) || "";
-          eva_engine.password = cookies.read(CookieNames.Password) || "";
+          eva_engine.set_login_password(
+            cookies.read(CookieNames.Login) || "",
+            cookies.read(CookieNames.Password) || ""
+          );
         }
-        if (eva_engine.login && eva_engine.password) {
+        if (eva_engine.is_auth_set()) {
           eva_engine.start();
         } else {
           setAppState({ state: AppStateKind.LoginForm });
@@ -478,10 +459,20 @@ const CredsForm = ({
     (e: any) => {
       e.preventDefault();
       setAppState({ state: AppStateKind.Login });
-      engine.login = form.login;
-      engine.password = form.password;
+      engine.set_login_password(form.login, form.password);
       if (props?.cache_login || props?.cache_auth) {
         cookies.create(CookieNames.Login, form.login, 365);
+      } else {
+        try {
+          cookies.erase(CookieNames.Login);
+        } catch (e) {}
+      }
+      if (props?.cache_auth) {
+        cookies.create(CookieNames.Password, form.password, 365);
+      } else {
+        try {
+          cookies.erase(CookieNames.Password);
+        } catch (e) {}
       }
       const nextFormState = {
         ...form,
