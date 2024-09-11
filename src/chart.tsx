@@ -256,8 +256,12 @@ const Chart = ({
             t_unit = "T";
           } else if (t_range < 86400 * 2) {
             t_unit = "H";
-          } else {
+          } else if (t_range < 86400 * 30) {
             t_unit = "D";
+          } else if (t_range < 86400 * 365) {
+            t_unit = "W";
+          } else {
+            t_unit = "M";
           }
         }
       } else {
@@ -271,7 +275,11 @@ const Chart = ({
           break;
         case "W":
           ct_unit = "day";
-          ct_format = "MM/dd HH::mm:ss";
+          ct_format = "MM/dd HH::mm";
+          break;
+        case "M":
+          ct_unit = "month";
+          ct_format = "YYYY/MM/dd";
           break;
         case "D":
           ct_unit = "hour";
