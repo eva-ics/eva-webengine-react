@@ -279,7 +279,7 @@ const Chart = ({
           break;
         case "M":
           ct_unit = "month";
-          ct_format = "YYYY/MM/dd";
+          ct_format = "yyyy/MM/dd";
           break;
         case "D":
           ct_unit = "hour";
