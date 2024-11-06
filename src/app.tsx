@@ -58,6 +58,8 @@ interface LoginProps {
   cache_login?: boolean;
   cache_auth?: boolean;
   register_globals?: boolean;
+  form_header?: () => JSX.Element;
+  form_footer?: () => JSX.Element;
 }
 
 interface FormData {
@@ -506,6 +508,7 @@ const CredsForm = ({
   }
   let content = (
     <>
+      {props?.form_header && props.form_header()}
       <form className="eva login" onSubmit={onSubmit}>
         <div className="eva login error">{error_msg}</div>
         <div className="eva login row text">
@@ -538,6 +541,7 @@ const CredsForm = ({
         {remember}
         <button className="eva login">{props?.label_enter || "Enter"}</button>
       </form>
+      {props?.form_footer && props.form_footer()}
     </>
   );
   return (
