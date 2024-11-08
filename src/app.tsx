@@ -35,6 +35,12 @@ enum CookieNames {
   Password = "auth_password"
 }
 
+enum LoginFailedAction {
+  Default = "default",
+  Retry = "retry",
+  Abort = "abort"
+}
+
 interface AppState {
   state: AppStateKind;
   svc_msg?: SvcMessage;
@@ -60,6 +66,7 @@ interface LoginProps {
   register_globals?: boolean;
   form_header?: () => JSX.Element;
   form_footer?: () => JSX.Element;
+  on_login_failed?: (err: EvaError) => LoginFailedAction | void;
 }
 
 interface FormData {
@@ -170,25 +177,37 @@ const HMIApp = ({
 
   useEffect(() => {
     eva_engine.on(EventKind.LoginFailed, (err: EvaError) => {
-      // try to re-login in case of invalid token
-      if (
-        err.code == EvaErrorKind.ACCESS_DENIED &&
-        (err.message == "invalid token" ||
-          err.message == "No token/API key specified") &&
-        eva_engine.is_auth_set()
-      ) {
-        eva_engine.erase_token_cookie();
+      let action;
+      if (login_props?.on_login_failed) {
+        action = login_props.on_login_failed(err);
+      } else {
+        action = LoginFailedAction.Default;
+      }
+      if (action == LoginFailedAction.Retry) {
         eva_engine.restart();
         return;
       }
-      // handle server error
-      if (
-        err.code == EvaErrorKind.CORE_ERROR &&
-        err.message == "Server error"
-      ) {
-        setAppState({ state: AppStateKind.Login });
-        eva_engine.restart();
-        return;
+      if (action != LoginFailedAction.Abort) {
+        // try to re-login in case of invalid token
+        if (
+          err.code == EvaErrorKind.ACCESS_DENIED &&
+          (err.message == "invalid token" ||
+            err.message == "No token/API key specified") &&
+          eva_engine.is_auth_set()
+        ) {
+          eva_engine.erase_token_cookie();
+          eva_engine.restart();
+          return;
+        }
+        // handle server error
+        if (
+          err.code == EvaErrorKind.CORE_ERROR &&
+          err.message == "Server error"
+        ) {
+          setAppState({ state: AppStateKind.Login });
+          eva_engine.restart();
+          return;
+        }
       }
       // delete password cookie if access denied
       if (
@@ -563,4 +582,4 @@ const LoginForm = ({ content }: { content: JSX.Element }) => {
   );
 };
 
-export { HMIApp, FunctionLogout, LoginProps };
+export { HMIApp, FunctionLogout, LoginProps, LoginFailedAction };
