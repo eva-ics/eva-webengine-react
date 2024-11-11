@@ -132,7 +132,7 @@ const ItemValue = ({
   }
   if (current_state.connected == false) cls += " disconnected";
   if (threshold) {
-    let v = parseFloat(current_state.value);
+    let v = parseFloat(value);
     for (const t of threshold) {
       if (v >= t.value) {
         cls += ` ${t.class}`;
