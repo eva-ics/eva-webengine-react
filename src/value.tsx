@@ -1,6 +1,7 @@
 import { Eva, ItemState } from "@eva-ics/webengine";
 import { useEvaState, CanvasPosition } from "./common";
 import { calculateFormula } from "bmat/numbers";
+import { CSSProperties } from "react";
 
 interface ItemValueDisplay {
   oid?: string;
@@ -85,6 +86,7 @@ const ItemValue = ({
   format_with,
   set_color_with,
   set_class_name_with,
+  set_style_with,
   engine
 }: {
   oid?: string;
@@ -97,6 +99,7 @@ const ItemValue = ({
   format_with?: (value: any) => any;
   set_color_with?: (value: any) => string | undefined;
   set_class_name_with?: (value: any) => string | undefined;
+  set_style_with?: (value: any) => CSSProperties;
   engine?: Eva;
 }) => {
   const eva_state = useEvaState({ oid, engine }, [oid, engine]);
@@ -147,8 +150,12 @@ const ItemValue = ({
   if (format_with) {
     value = format_with(value);
   }
+  const style: CSSProperties = set_style_with ? set_style_with(value) : {};
+  if (color) {
+    style.color = color;
+  }
   return (
-    <span className={`eva state ${cls}`} style={{ color: color }}>
+    <span className={`eva state ${cls}`} style={style}>
       {value}
       {units}
     </span>
