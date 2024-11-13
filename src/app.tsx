@@ -113,11 +113,6 @@ const HMIApp = ({
     throw new Error("EVA ICS WebEngine not set");
   }
 
-  if (app_state.state == AppStateKind.LoginSession && eva_engine.logged_in) {
-    setAppState({ state: AppStateKind.Active });
-    return <></>;
-  }
-
   const [form, setForm] = useState<FormData>({
     login: "",
     password: "",
@@ -261,6 +256,11 @@ const HMIApp = ({
         break;
     }
   }, [app_state, login_props, eva_engine]);
+
+  if (app_state.state == AppStateKind.LoginSession && eva_engine.logged_in) {
+    setAppState({ state: AppStateKind.Active });
+    return <></>;
+  }
 
   switch (app_state.state) {
     case AppStateKind.Active:
