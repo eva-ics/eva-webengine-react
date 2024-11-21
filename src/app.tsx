@@ -67,6 +67,7 @@ interface LoginProps {
   form_header?: () => JSX.Element;
   form_footer?: () => JSX.Element;
   on_login_failed?: (err: EvaError) => LoginFailedAction | void;
+  prelogin_hook?: () => Promise<unknown>;
 }
 
 interface FormData {
@@ -153,6 +154,7 @@ const HMIApp = ({
 
   useEffect(() => {
     eva_engine.on(EventKind.LoginSuccess, () => {
+      eva_engine.login_xopts = null;
       setAppState({ state: AppStateKind.Active });
     });
   }, [form.remember, login_props, app_state, eva_engine]);
@@ -269,7 +271,6 @@ const HMIApp = ({
           <Dashboard engine={eva_engine} logout={logout} />
         </>
       );
-      break;
     case AppStateKind.LoginSession:
     case AppStateKind.LoginAuto:
     case AppStateKind.Login:
@@ -280,7 +281,6 @@ const HMIApp = ({
           </div>
         </>
       );
-      break;
     case AppStateKind.OtpAuth:
     case AppStateKind.OtpSetup:
       return (
@@ -294,7 +294,6 @@ const HMIApp = ({
           />
         </>
       );
-      break;
     default:
       let error_msg = app_state.err?.message;
       // for strict mode in development
@@ -484,28 +483,48 @@ const CredsForm = ({
   const onSubmit = useCallback(
     (e: any) => {
       e.preventDefault();
-      setAppState({ state: AppStateKind.Login });
-      engine.set_login_password(form.login, form.password);
-      if (props?.cache_login || props?.cache_auth) {
-        cookies.create(CookieNames.Login, form.login, 365);
-      } else {
-        try {
-          cookies.erase(CookieNames.Login);
-        } catch (e) {}
-      }
-      if (props?.cache_auth) {
-        cookies.create(CookieNames.Password, form.password, 365);
-      } else {
-        try {
-          cookies.erase(CookieNames.Password);
-        } catch (e) {}
-      }
-      const nextFormState = {
-        ...form,
-        password: ""
+
+      const do_login = () => {
+        setAppState({ state: AppStateKind.Login });
+        engine.set_login_password(form.login, form.password);
+        if (props?.cache_login || props?.cache_auth) {
+          cookies.create(CookieNames.Login, form.login, 365);
+        } else {
+          try {
+            cookies.erase(CookieNames.Login);
+          } catch (e) {}
+        }
+        if (props?.cache_auth) {
+          cookies.create(CookieNames.Password, form.password, 365);
+        } else {
+          try {
+            cookies.erase(CookieNames.Password);
+          } catch (e) {}
+        }
+        const nextFormState = {
+          ...form,
+          password: ""
+        };
+        setForm(nextFormState);
+        engine.start();
       };
-      setForm(nextFormState);
-      engine.start();
+
+      if (props?.prelogin_hook) {
+        props
+          .prelogin_hook()
+          .then((data: any) => {
+            engine.login_xopts = { data };
+            do_login();
+          })
+          .catch((e) => {
+            setAppState({
+              state: AppStateKind.LoginForm,
+              err: { code: EvaErrorKind.FUNC_FAILED, message: e.toString() }
+            });
+          });
+      } else {
+        do_login();
+      }
     },
     [engine, props, form]
   );
