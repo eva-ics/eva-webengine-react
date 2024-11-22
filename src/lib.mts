@@ -19,8 +19,8 @@ export type {
   StateHistoryData,
   EvaStateUpdatesParams
 } from "./common";
-export type { FunctionLogout, LoginProps } from "./app";
-export { HMIApp, LoginFailedAction } from "./app";
+export type { FunctionLogout, LoginProps, HMIAppState } from "./app";
+export { HMIApp, HMIAppStateKind, LoginFailedAction } from "./app";
 export { ItemValueTable, ItemValue } from "./value";
 export type { ItemValueDisplay, ItemValueThreshold } from "./value";
 export type { ControlButtonDisplay } from "./control";

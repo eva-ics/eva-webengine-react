@@ -20,7 +20,7 @@ import toast from "react-hot-toast";
 
 type FunctionLogout = () => void;
 
-enum AppStateKind {
+export enum HMIAppStateKind {
   LoginSession = "login_session",
   LoginAuto = "login_auto",
   Login = "login",
@@ -41,8 +41,8 @@ enum LoginFailedAction {
   Abort = "abort"
 }
 
-interface AppState {
-  state: AppStateKind;
+export interface HMIAppState {
+  state: HMIAppStateKind;
   svc_msg?: SvcMessage;
   err?: EvaError;
 }
@@ -68,6 +68,7 @@ interface LoginProps {
   form_footer?: () => JSX.Element;
   on_login_failed?: (err: EvaError) => LoginFailedAction | void;
   prelogin_hook?: () => Promise<unknown>;
+  state_announce?: (state: HMIAppState) => void;
 }
 
 interface FormData {
@@ -105,9 +106,19 @@ const HMIApp = ({
   }) => JSX.Element;
   login_props?: LoginProps;
 }) => {
-  const [app_state, setAppState] = useState<AppState>({
-    state: AppStateKind.LoginSession
+  const [app_state, setAppState] = useState<HMIAppState>({
+    state: HMIAppStateKind.LoginSession
   });
+
+  const setHMIAppState = useCallback(
+    (state: HMIAppState) => {
+      if (login_props?.state_announce) {
+        login_props.state_announce({ ...state });
+        setAppState(state);
+      }
+    },
+    [login_props?.state_announce]
+  );
 
   const eva_engine = engine || (get_engine() as Eva);
   if (!eva_engine) {
@@ -128,7 +139,7 @@ const HMIApp = ({
       await eva_engine.stop();
       eva_engine.clear_auth();
     } catch (e) {}
-    setAppState({ state: AppStateKind.LoginForm });
+    setHMIAppState({ state: HMIAppStateKind.LoginForm });
   }, [eva_engine]);
 
   useEffect(() => {
@@ -141,7 +152,7 @@ const HMIApp = ({
       const hmi = w.$eva.hmi;
       hmi.logout = logout;
       hmi.login = (login: string, password: string) => {
-        setAppState({ state: AppStateKind.Login });
+        setHMIAppState({ state: HMIAppStateKind.Login });
         eva_engine.stop().finally(() => {
           eva_engine.set_login_password(login, password);
           setForm({ login: "", password: "", remember: false });
@@ -155,22 +166,22 @@ const HMIApp = ({
   useEffect(() => {
     eva_engine.on(EventKind.LoginSuccess, () => {
       eva_engine.login_xopts = null;
-      setAppState({ state: AppStateKind.Active });
+      setHMIAppState({ state: HMIAppStateKind.Active });
     });
   }, [form.remember, login_props, app_state, eva_engine]);
 
   useEffect(() => {
     eva_engine.on(EventKind.LoginOTPSetup, (msg: SvcMessage) => {
-      setAppState({ state: AppStateKind.OtpSetup, svc_msg: msg });
+      setHMIAppState({ state: HMIAppStateKind.OtpSetup, svc_msg: msg });
       eva_engine.login_xopts = null;
     });
     eva_engine.on(EventKind.LoginOTPRequired, () => {
-      setAppState({ state: AppStateKind.OtpAuth });
+      setHMIAppState({ state: HMIAppStateKind.OtpAuth });
       eva_engine.login_xopts = null;
     });
     eva_engine.on(EventKind.LoginOTPInvalid, () => {
-      setAppState({
-        state: AppStateKind.OtpAuth,
+      setHMIAppState({
+        state: HMIAppStateKind.OtpAuth,
         err: { code: EvaErrorKind.ACCESS_DENIED }
       });
       eva_engine.login_xopts = null;
@@ -206,7 +217,7 @@ const HMIApp = ({
           err.code == EvaErrorKind.CORE_ERROR &&
           err.message == "Server error"
         ) {
-          setAppState({ state: AppStateKind.Login });
+          setHMIAppState({ state: HMIAppStateKind.Login });
           eva_engine.restart();
           return;
         }
@@ -214,25 +225,25 @@ const HMIApp = ({
       // delete password cookie if access denied
       if (
         err.code == EvaErrorKind.ACCESS_DENIED &&
-        app_state.state == AppStateKind.LoginAuto
+        app_state.state == HMIAppStateKind.LoginAuto
       ) {
         try {
           cookies.erase(CookieNames.Password);
         } catch (e) {}
       }
-      setAppState({
+      setHMIAppState({
         state:
-          app_state.state == AppStateKind.LoginSession &&
+          app_state.state == HMIAppStateKind.LoginSession &&
           err.code == EvaErrorKind.ACCESS_DENIED
-            ? AppStateKind.LoginAuto
-            : AppStateKind.LoginForm,
+            ? HMIAppStateKind.LoginAuto
+            : HMIAppStateKind.LoginForm,
         err: err
       });
     });
 
     switch (app_state.state) {
       // try to login with an existing session or basic auth
-      case AppStateKind.LoginSession:
+      case HMIAppStateKind.LoginSession:
         // set login/password for further login attempts
         if (login_props?.cache_auth && !eva_engine.is_auth_set()) {
           eva_engine.set_login_password(
@@ -242,7 +253,7 @@ const HMIApp = ({
         }
         eva_engine.start();
         break;
-      case AppStateKind.LoginAuto:
+      case HMIAppStateKind.LoginAuto:
         // try to auto login if there is a token in cookies or basic auth is used
         if (login_props?.cache_auth) {
           eva_engine.set_login_password(
@@ -253,27 +264,27 @@ const HMIApp = ({
         if (eva_engine.is_auth_set()) {
           eva_engine.start();
         } else {
-          setAppState({ state: AppStateKind.LoginForm });
+          setHMIAppState({ state: HMIAppStateKind.LoginForm });
         }
         break;
     }
   }, [app_state, login_props, eva_engine]);
 
-  if (app_state.state == AppStateKind.LoginSession && eva_engine.logged_in) {
-    setAppState({ state: AppStateKind.Active });
+  if (app_state.state == HMIAppStateKind.LoginSession && eva_engine.logged_in) {
+    setHMIAppState({ state: HMIAppStateKind.Active });
     return <></>;
   }
 
   switch (app_state.state) {
-    case AppStateKind.Active:
+    case HMIAppStateKind.Active:
       return (
         <>
           <Dashboard engine={eva_engine} logout={logout} />
         </>
       );
-    case AppStateKind.LoginSession:
-    case AppStateKind.LoginAuto:
-    case AppStateKind.Login:
+    case HMIAppStateKind.LoginSession:
+    case HMIAppStateKind.LoginAuto:
+    case HMIAppStateKind.Login:
       return (
         <>
           <div className="eva login progress">
@@ -281,14 +292,14 @@ const HMIApp = ({
           </div>
         </>
       );
-    case AppStateKind.OtpAuth:
-    case AppStateKind.OtpSetup:
+    case HMIAppStateKind.OtpAuth:
+    case HMIAppStateKind.OtpSetup:
       return (
         <>
           <OtpForm
             engine={eva_engine}
             app_state={app_state}
-            setAppState={setAppState}
+            setAppState={setHMIAppState}
             props={login_props}
             logout={logout}
           />
@@ -309,7 +320,7 @@ const HMIApp = ({
             engine={eva_engine}
             form={form}
             setForm={setForm}
-            setAppState={setAppState}
+            setAppState={setHMIAppState}
             props={login_props}
             error_msg={error_msg}
           />
@@ -326,8 +337,8 @@ const OtpForm = ({
   logout
 }: {
   engine: Eva;
-  app_state: AppState;
-  setAppState: Dispatch<SetStateAction<AppState>>;
+  app_state: HMIAppState;
+  setAppState: (state: HMIAppState) => void;
   props?: LoginProps;
   logout: FunctionLogout;
 }) => {
@@ -346,7 +357,7 @@ const OtpForm = ({
 
   const onSubmit = (e: any) => {
     e.preventDefault();
-    setAppState({ state: AppStateKind.Login });
+    setAppState({ state: HMIAppStateKind.Login });
     engine.login_xopts = { otp: otp_form.otp };
     const nextFormState = {
       ...otp_form,
@@ -367,7 +378,7 @@ const OtpForm = ({
 
   let form_data;
   switch (app_state.state) {
-    case AppStateKind.OtpSetup:
+    case HMIAppStateKind.OtpSetup:
       let otp_setup = `otpauth://totp/${engine.login}?secret=${app_state?.svc_msg?.value}`;
       if (props?.otp_issuer_name) {
         otp_setup += `&issuer=${props.otp_issuer_name}`;
@@ -448,7 +459,7 @@ const CredsForm = ({
   engine: Eva;
   form: FormData;
   setForm: Dispatch<SetStateAction<FormData>>;
-  setAppState: Dispatch<SetStateAction<AppState>>;
+  setAppState: (state: HMIAppState) => void;
   error_msg?: string;
   props?: LoginProps;
 }) => {
@@ -485,7 +496,7 @@ const CredsForm = ({
       e.preventDefault();
 
       const do_login = () => {
-        setAppState({ state: AppStateKind.Login });
+        setAppState({ state: HMIAppStateKind.Login });
         engine.set_login_password(form.login, form.password);
         if (props?.cache_login || props?.cache_auth) {
           cookies.create(CookieNames.Login, form.login, 365);
@@ -518,7 +529,7 @@ const CredsForm = ({
           })
           .catch((e) => {
             setAppState({
-              state: AppStateKind.LoginForm,
+              state: HMIAppStateKind.LoginForm,
               err: { code: EvaErrorKind.FUNC_FAILED, message: e.toString() }
             });
           });
