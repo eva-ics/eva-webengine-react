@@ -114,8 +114,8 @@ const HMIApp = ({
     (state: HMIAppState) => {
       if (login_props?.state_announce) {
         login_props.state_announce({ ...state });
-        setAppState(state);
       }
+      setAppState(state);
     },
     [login_props?.state_announce]
   );
