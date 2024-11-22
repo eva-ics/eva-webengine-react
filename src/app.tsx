@@ -68,7 +68,7 @@ interface LoginProps {
   form_footer?: () => JSX.Element;
   on_login_failed?: (err: EvaError) => LoginFailedAction | void;
   prelogin_hook?: () => Promise<unknown>;
-  state_announce?: (state: HMIAppState) => void;
+  state_announce?: (app_state: HMIAppState) => void;
 }
 
 interface FormData {
