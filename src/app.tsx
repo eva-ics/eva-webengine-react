@@ -246,6 +246,7 @@ const HMIApp = ({
       case HMIAppStateKind.LoginSession:
         // set login/password for further login attempts
         if (login_props?.cache_auth && !eva_engine.is_auth_set()) {
+          eva_engine.ignore_password_set_on_next_login = true;
           eva_engine.set_login_password(
             cookies.read(CookieNames.Login) || "",
             cookies.read(CookieNames.Password) || ""
