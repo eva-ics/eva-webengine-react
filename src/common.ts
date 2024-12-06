@@ -1,4 +1,4 @@
-const eva_webengine_react_version = "0.5.12";
+const eva_webengine_react_version = "0.5.13";
 
 import {
   Eva,

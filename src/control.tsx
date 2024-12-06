@@ -162,7 +162,7 @@ const ControlButtonToggle = ({
         />
         <span className={`eva button slider ${css_class || ""}`}></span>
         <div className={`eva button label slider ${css_class || ""}`}>
-          {label || oid}
+          {label}
         </div>
       </label>
     </div>
