@@ -74,8 +74,7 @@ const useEvaStateBulk = (
   useEffect(() => {
     const setItemState = (s: ItemState) => {
       if (s.oid) {
-        state[s.oid] = s;
-        setState({ ...state });
+        setState((prevState) => ({ ...prevState, [s.oid!]: s }));
       }
     };
     if (params.oid && params.oid.length > 0) {
@@ -91,6 +90,7 @@ const useEvaStateBulk = (
     }
     return () => {
       if (eva_engine && params.oid && params.oid.length > 0) {
+        setState({});
         params.oid.forEach((oid) => {
           eva_engine.unwatch(oid, setItemState);
         });
