@@ -111,6 +111,7 @@ const Chart = ({
   fill,
   args,
   colors,
+  dataset_options,
   labels,
   title,
   options,
@@ -131,6 +132,7 @@ const Chart = ({
   fill?: string;
   args?: any;
   colors?: Array<string>;
+  dataset_options?: (dataset_index: number) => Object;
   labels?: Array<string>;
   title?: string;
   options?: any;
@@ -233,12 +235,18 @@ const Chart = ({
               dataframe = current_state.data[d][key];
             }
           } catch (e) {}
+          let opts: Object;
+          if (dataset_options) {
+            opts = dataset_options(xidx);
+          } else {
+            opts = { fill: false };
+          }
           (data.datasets as any).push({
             data: dataframe,
             label: label,
             borderColor: color,
             backgroundColor: color,
-            fill: false
+            ...opts
           });
           xidx += 1;
         }
