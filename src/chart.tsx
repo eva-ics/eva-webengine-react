@@ -283,7 +283,7 @@ const Chart = ({
           break;
         case "W":
           ct_unit = "day";
-          ct_format = "MM/dd HH::mm";
+          ct_format = "MM/dd HH:mm";
           break;
         case "M":
           ct_unit = "month";
@@ -291,7 +291,7 @@ const Chart = ({
           break;
         case "D":
           ct_unit = "hour";
-          ct_format = "MM/dd HH::mm:ss";
+          ct_format = "MM/dd HH:mm:ss";
           break;
         default:
           ct_unit = "minute";
