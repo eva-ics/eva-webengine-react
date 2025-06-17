@@ -41,9 +41,11 @@
   "homepage": "https://www.eva-ics.com/",
   "peerDependencies": {
     "@eva-ics/webengine": "^0.9.0",
+    "@eva-ics/webengine-multimedia": "^0.1.0",
     "async-mutex": "^0.4.0",
     "bmat": "^0.1.15",
     "chart.js": "^4.1.1",
+    "uuid": "^9.0.1",
     "react": "^18.2.0",
     "react-chartjs-2": "^5.2.0",
     "react-dom": "^18.2.0",

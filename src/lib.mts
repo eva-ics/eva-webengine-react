@@ -44,3 +44,5 @@ export { ProgressBar } from "./progressbar";
 export { EvaErrorMessage } from "./error";
 export type { StateHistoryOIDColMapping } from "./tools";
 export { generateStateHistoryCSV } from "./tools";
+export type { EvaLivePlayerParams } from "./multimedia";
+export { EvaLivePlayer } from "./multimedia";
