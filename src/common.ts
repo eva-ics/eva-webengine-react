@@ -9,6 +9,7 @@ import {
 } from "@eva-ics/webengine";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Mutex } from "async-mutex";
+import { set_engine as set_engine_multimedia } from "@eva-ics/webengine-multimedia";
 
 let eva: Eva | null = null;
 
@@ -21,6 +22,7 @@ const get_engine = (): Eva | null => {
 const set_engine = (engine: Eva) => {
   eva = engine;
   (eva as any).wer_version = eva_webengine_react_version;
+  set_engine_multimedia(eva);
 };
 
 interface CanvasPosition {
