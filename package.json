@@ -45,16 +45,17 @@
     "async-mutex": "^0.4.0",
     "bmat": "^0.1.15",
     "chart.js": "^4.1.1",
-    "uuid": "^9.0.1",
     "react": "^18.2.0",
     "react-chartjs-2": "^5.2.0",
     "react-dom": "^18.2.0",
     "react-hot-toast": "^2.4.1",
-    "react-qr-code": "^2.0.12"
+    "react-qr-code": "^2.0.12",
+    "uuid": "^9.0.1"
   },
   "devDependencies": {
     "@types/react": "^18.0.37",
     "@types/react-dom": "^18.0.11",
+    "@types/uuid": "^10.0.0",
     "typescript": "^5.0.2",
     "vite": "^4.3.9"
   }
