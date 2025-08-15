@@ -1,5 +1,5 @@
 import {
-  EvaLivePlayerAutoSize,
+  EvaPlayerAutoSize,
   type EvaVideoStreamInfo,
   EvaLivePlayer as EvaLivePlayerC
 } from "@eva-ics/webengine-multimedia";
@@ -14,7 +14,7 @@ export interface EvaLivePlayerParams {
   height?: number | string;
   className?: string;
   style?: React.CSSProperties;
-  autoSize?: EvaLivePlayerAutoSize;
+  autoSize?: EvaPlayerAutoSize;
   engine?: Eva;
   onError?: (error: EvaError) => void;
   onFrame?: () => void;
@@ -44,7 +44,7 @@ export const EvaLivePlayer = (params: EvaLivePlayerParams) => {
       onChange: params.onChange,
       decoderHardwareAcceleration: params.decoderHardwareAcceleration,
       decoderFallbackToSoftware: params.decoderFallbackToSoftware,
-      autoSize: params.autoSize || EvaLivePlayerAutoSize.None
+      autoSize: params.autoSize || EvaPlayerAutoSize.None
     });
 
     if (params.setPlayer) {
