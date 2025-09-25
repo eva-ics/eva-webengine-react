@@ -10,6 +10,7 @@ export default defineConfig({
     rollupOptions: {
       external: [
         "@eva-ics/webengine",
+        "@eva-ics/webengine-multimedia",
         "react",
         "react-dom",
         "react-hot-toast",
