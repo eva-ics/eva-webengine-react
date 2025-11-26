@@ -1,4 +1,4 @@
-const eva_webengine_react_version = "0.5.20";
+const eva_webengine_react_version = "0.5.21";
 
 import {
   Eva,
@@ -56,6 +56,7 @@ const useEvaState = (params: EvaStateParams, dependencies: Array<any>) => {
       if (eva_engine && params.oid) {
         eva_engine.unwatch(params.oid, setItemState);
       }
+      setState({} as ItemState);
     };
   }, dependencies);
   return state;
@@ -92,11 +93,11 @@ const useEvaStateBulk = (
     }
     return () => {
       if (eva_engine && params.oid && params.oid.length > 0) {
-        setState({});
         params.oid.forEach((oid) => {
           eva_engine.unwatch(oid, setItemState);
         });
       }
+      setState({});
     };
   }, dependencies);
   return state;
