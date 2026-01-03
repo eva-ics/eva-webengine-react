@@ -297,7 +297,7 @@ const Chart = ({
           ct_unit = "minute";
           ct_format = "HH:mm:ss";
       }
-      const default_chart_ops = {
+      const default_chart_opts = {
         responsive: true,
         scales: {
           y: {
@@ -356,7 +356,7 @@ const Chart = ({
           }
         }
       };
-      let chart_ops = deepMerge(default_chart_ops, options);
+      let chart_ops = deepMerge(default_chart_opts, options);
       return (
         <div style={chart_style} className={`eva chart container ${className}`}>
           <ChartDisplay
