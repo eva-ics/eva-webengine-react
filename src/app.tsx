@@ -154,6 +154,7 @@ const HMIApp = ({
             id: 1
           })
         });
+        document.location = "/";
       } catch (e) {}
     }
     setHMIAppState({ state: HMIAppStateKind.LoginForm });
