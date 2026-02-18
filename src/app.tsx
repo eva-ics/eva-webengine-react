@@ -69,6 +69,7 @@ interface LoginProps {
   on_login_failed?: (err: EvaError) => LoginFailedAction | void;
   prelogin_hook?: () => Promise<unknown>;
   state_announce?: (app_state: HMIAppState) => void;
+  use_gateryx_api?: boolean;
 }
 
 interface FormData {
@@ -139,6 +140,22 @@ const HMIApp = ({
       await eva_engine.stop();
       eva_engine.clear_auth();
     } catch (e) {}
+    if (login_props?.use_gateryx_api) {
+      try {
+        await fetch("/.gateryx/rpc", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            jsonrpc: "2.0",
+            method: "gate.logout",
+            params: {},
+            id: 1
+          })
+        });
+      } catch (e) {}
+    }
     setHMIAppState({ state: HMIAppStateKind.LoginForm });
   }, [eva_engine]);
 
